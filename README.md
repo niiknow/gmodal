@@ -81,6 +81,15 @@ The following are events emit from gmodal:
 
 See https://github.com/component/emitter for documentation on trapping these events.
 
+Lets say you want to hide modal based on any/all interaction with the overlay, you can 
+wire up with all the events directly to the gmodal hide function:
+
+```
+gmodal.on('tap', gmodal.hide)
+gmodal.on('click', gmodal.hide)
+gmodal.on('esc', gmodal.hide)
+```
+
 ### examples
 ```
 window.gmodal.elWrapper;  // the overlay element
