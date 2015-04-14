@@ -1,20 +1,42 @@
 # gmodal
-There can be only one.  This project aim to create a cross-browser modal with overlay. To keep it simple, there should only be one modal; and therefore, gmodal will be a global object.
+There can be only one.  This project aim to create a cross-browser modal with overlay. 
+To keep things simple, we are defining that a modal is a singleton object; and therefore, it would be a global object.
 
-# spec
+The initial requirement for this project.
+
 1. Create a global variable for the modal.
 2. Modal will center on the screen.
 3. Modal will have its own overlay/backdrop that can prevent user interaction with the background.
-4. On interaction with overlay, classes are added.  Possible classes are ('click, esc, tap')
-5. Addtional classes can be added to the modal.
+4. People can bring their own css.
 
-# css
-Provided CSS are built into the modal script.  Since it is a global modal, the modal id is also the same as the classname.  This make it possible to override with your own CSS such as setting overlay transparency.
+# template
+In order to attain cross-browser compatibility, gmodal template uses a grid system.  The
+template is as followed:
+```coffee
+gmodal
+  gmodal-top (1st row - allow you to add 'padding-top' css separate from content)
+  gmodal-left (2nd row - left collumn - allow for left padding - default 33%)
+  gmodal-content (2nd row - middle collumn - content container - default 33%)
+    your-own-content-goes-here
+  gmodal-right (2nd row - right column - allow for right padding - default 33%)
+```
+
+## css
+
+
+## API
+
+### gmodal#show(options)
+ Display the modal.  The options are:
+ * content: string - the html content
+ * cls: string - additional class to add to the gmodal div
+
+### gmodal#hide()
 
 ```
 window.gmodal.elWrapper;  // the overlay element
 window.gmodal.el;  // the element that contain content
-window.gmodal.show({content: 'html here', cls: 'additiona classes'});
+window.gmodal.show({content: 'html here', cls: 'additional classes'});
 window.gmodal.hide();
 window.gmodal.on(eventName); // listen to even on overlay or modal
 ```
