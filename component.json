@@ -1,0 +1,24 @@
+{
+  "name": "gmodal",
+  "main": "index.js",
+  "repo": "niiknow/gmodal",
+  "description": "Global modal.",
+  "version": "1.0.0",
+  "keywords": [
+    "modal",
+    "web"
+  ],
+  "dependencies": {
+    "component/emitter": "*"
+  },
+  "development": {
+    "yields/coverage": "*",
+    "component/jquery": "*",
+    "component/assert": "*",
+    "ianstormtaylor/trigger-event": "*",
+    "jkroso/equals": "*",
+    "ianstormtaylor/sinon": "duo",
+    "timoxley/next-tick": "*",
+    "yields/gravy": "*"
+  }
+}
