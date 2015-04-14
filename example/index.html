@@ -31,6 +31,12 @@
 		background: #fff; /* IE8 */
 	}
 
+	/* make bootstrap modal scrollable */
+	.modal-body {
+	    max-height: 200px;
+	    overflow-y: auto;
+	}
+
 	</style>
 	<!-- /For demo purpose -->
 
@@ -51,7 +57,7 @@
 <body>
 
 	<h1>gmodal.js</h1>
-
+	<div>Works with your own css.</div>
 	<button onclick="showModal1()">Open modal1</button>
 
     <script type="text/html" id="modal1-content">
@@ -67,26 +73,18 @@
 				<li>Aliquam tincidunt mauris eu risus.</li>
 			</ol>
 
-			<blockquote><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus magna. Cras in mi at felis aliquet congue. Ut a est eget ligula molestie gravida. Curabitur massa. Donec eleifend, libero at sagittis mollis, tellus est malesuada tellus, at luctus turpis elit sit amet quam. Vivamus pretium ornare est.</p></blockquote>
-
-			<h3>Header Level 3</h3>
-
-			<ul>
-				<li>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</li>
-				<li>Aliquam tincidunt mauris eu risus.</li>
-			</ul>
 			
-			<button class="easy-modal-close" title="Close">&times;</button>
+			<button class="gmodal-close" title="Close">&times;</button>
 		</div>
     </script>
 
-    
+
 	<button onclick="showModal2()">Open modal2</button>
      <script type="text/html" id="modal2-content">
        <div class="modal-dialog">
 	    <div class="modal-content">
 	      <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <button type="button" class="close gmodal-close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
 	      </div>
 	      <div class="modal-body">
@@ -101,8 +99,6 @@
 				<li>Aliquam tincidunt mauris eu risus.</li>
 			</ol>
 
-			<blockquote><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus magna. Cras in mi at felis aliquet congue. Ut a est eget ligula molestie gravida. Curabitur massa. Donec eleifend, libero at sagittis mollis, tellus est malesuada tellus, at luctus turpis elit sit amet quam. Vivamus pretium ornare est.</p></blockquote>
-
 			<h3>Header Level 3</h3>
 
 			<ul>
@@ -111,13 +107,12 @@
 			</ul>
 	      </div>
 	      <div class="modal-footer">
-	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        <button type="button" class="btn btn-default gmodal-close" data-dismiss="modal">Close</button>
 	        <button type="button" class="btn btn-primary">Save changes</button>
 	      </div>
 	    </div>
 	    </div>
      </script>
-
 
 </body>
 </html>

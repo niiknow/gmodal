@@ -1,20 +1,20 @@
 .gmodal {
-	display: none;
-	position: fixed;
-	top: 0;
-	left: 0;
+    display: none;
+    overflow: hidden;
+    outline: 0;
+    -webkit-overflow-scrolling: touch;
+    position: fixed;
+    top: 0;
+    left: 0;
     bottom: 0;
     right: 0;
     width: 100%;
     height: 100%;
-	z-index: 9999990;  /* based on safari 16777271 */ 
+    z-index: 9999990;  /* based on safari 16777271 */ 
 }
-
-.gmodal-show {
-	display: table;
-}
-
-.gmodal-wrap {
+.gmodal-show { display: table }
+.gmodal-wrap,
+.gmodal-content {
     display: table-cell;
     width: 33%;
 }

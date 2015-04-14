@@ -93,13 +93,13 @@
 1: [function(require, module, exports) {
 (function() {
   (function(win) {
-    var $baseCls, $css, $doc, $tpl, $win, Emitter, createModal, injectStyle, modal, result;
+    var $baseCls, $css, $doc, $tpl, $win, Emitter, createModal, hasCls, injectStyle, modal, result;
     Emitter = require('emitter');
     $win = win;
     $doc = $win.document;
     $baseCls = 'gmodal';
     $tpl = '<div class="gmodal-wrap gmodal-top">&nbsp;<div><div class="gmodal-wrap gmodal-left"></div><div class="gmodal-content" id="gmodalContent"></div><div class="gmodal-wrap gmodal-right"></div>';
-    $css = '.gmodal{display:none;overflow:hidden;outline:0;-webkit-overflow-scrolling: touch;position:fixed;top:0;left:0;bottom:0;right:0;width:100%;height:100%;z-index:9999990}.gmodal-show{display:table}.gmodal-wrap,.gmodal-content{display:table-cell;width:33%}}';
+    $css = '.gmodal{display:none;overflow:hidden;outline:0;-webkit-overflow-scrolling: touch;position:fixed;top:0;left:0;bottom:0;right:0;width:100%;height:100%;z-index:9999990}.gmodal-show{display:table}.gmodal-wrap,.gmodal-content{display:table-cell;width:33%}';
     injectStyle = function(id, data) {
       var el;
       el = $doc.getElementById(id);
@@ -109,6 +109,17 @@
         el.appendChild($doc.createTextNode(data));
         return ($doc.head || $doc.getElementsByTagName('head')[0]).appendChild(el);
       }
+    };
+    hasCls = function(el, cls) {
+      var i, k, len, ref, v;
+      ref = cls.split(' ');
+      for (k = i = 0, len = ref.length; i < len; k = ++i) {
+        v = ref[k];
+        if ((' ' + el.className).indexOf(' ' + v) >= 0) {
+          return true;
+        }
+      }
+      return false;
     };
     createModal = function() {
       var el, myKeypress;
@@ -120,7 +131,7 @@
         el.onclick = function(evt) {
           evt = evt || $win.event;
           evt.target = evt.target || evt.srcElement;
-          if (evt.target.className.indexOf('gmodal-wrap') >= 0 || evt.target === el) {
+          if (hasCls(evt.target, 'gmodal-wrap gmodal-close') || evt.target === el) {
             gmodal.emit('click', evt);
           }
           return false;
@@ -128,7 +139,7 @@
         myKeypress = function(evt) {
           evt = evt || $win.event;
           evt.target = evt.target || evt.srcElement;
-          if (evt.target.className.indexOf('gmodal-wrap') >= 0 || evt.target === el || (evt.target = $doc)) {
+          if (hasCls(evt.target, 'gmodal-wrap') || evt.target === el || evt.target === $doc || evt.target === $doc.body) {
             if ((evt.which || evt.keyCode) === 27) {
               gmodal.emit('esc', evt);
             }
@@ -140,7 +151,7 @@
         el.ontap = function(evt) {
           evt = evt || $win.event;
           evt.target = evt.target || evt.srcElement;
-          if (evt.target.className.indexOf('gmodal-wrap') >= 0 || evt.target === el) {
+          if (hasCls(evt.target, 'gmodal-wrap') || evt.target === el) {
             gmodal.emit('tap', evt);
           }
           return false;
