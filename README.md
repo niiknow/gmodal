@@ -90,6 +90,13 @@ gmodal.on('click', gmodal.hide)
 gmodal.on('esc', gmodal.hide)
 ```
 
+You can also emit your own modal event and have code listen to it.
+
+```
+gmodal.emit('save-click', objToSave)
+gmodal.on('save-click', function(objToSave) {
+	// do something with objToSave
+});
 ### examples
 ```
 window.gmodal.elWrapper;  // the overlay element

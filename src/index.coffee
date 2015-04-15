@@ -47,7 +47,7 @@
       el.ontap = (evt) ->
         evt = evt || $win.event
         evt.target = evt.target || evt.srcElement;
-        if (hasCls(evt.target, 'gmodal-wrap')|| evt.target == el)
+        if (hasCls(evt.target, 'gmodal-wrap gmodal-close')|| evt.target == el)
           gmodal.emit('tap', evt)
         return false
 
