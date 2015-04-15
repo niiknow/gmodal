@@ -20,13 +20,12 @@ gmodal
 ```
   
 ## css classes
-*gmodal* - the primary overlay/wrapper
-*gmodal-top* (1st row - allow you to add 'padding-top' css separate from content)
-*gmodal-left* (2nd row - left collumn - allow for left padding - default 33%)
-*gmodal-content* (2nd row - middle collumn - content container - default 33%)
-*gmodal-right* (2nd row - right column - allow for right padding - default 33%)
-*gmodal-close* class can be use to tag element for close on click.  You can also 
-use the gmodal.close method directly.
+* *gmodal* - the primary overlay/wrapper
+* *gmodal-top* (1st row - allow you to add 'padding-top' css separate from content)
+* *gmodal-left* (2nd row - left collumn - allow for left padding - default 33%)
+* *gmodal-content* (2nd row - middle collumn - content container - default 33%)
+* *gmodal-right* (2nd row - right column - allow for right padding - default 33%)
+* *gmodal-close* class can be use to tag element for close on click.  You can also use the gmodal.close method directly.
 ```
 <button class="gmodal-close">x</button>
 ```
