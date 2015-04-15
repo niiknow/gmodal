@@ -97,7 +97,9 @@ gmodal.emit('save-click', objToSave)
 gmodal.on('save-click', function(objToSave) {
 	// do something with objToSave
 });
-### examples
+```
+
+### other examples
 ```
 window.gmodal.elWrapper;  // the overlay element
 window.gmodal.el;         // the element that contain content
