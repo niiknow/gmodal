@@ -95,11 +95,11 @@
   (function(win) {
     var $baseCls, $css, $doc, $tpl, $win, Emitter, createModal, hasCls, injectStyle, modal, result;
     Emitter = require('emitter');
+    $tpl = require('./template.html');
+    $css = require('./index.css');
     $win = win;
     $doc = $win.document;
     $baseCls = 'gmodal';
-    $tpl = '<div class="gmodal-wrap gmodal-top">&nbsp;<div><div class="gmodal-wrap gmodal-left"></div><div class="gmodal-content" id="gmodalContent"></div><div class="gmodal-wrap gmodal-right"></div>';
-    $css = '.gmodal{display:none;overflow:hidden;outline:0;-webkit-overflow-scrolling: touch;position:fixed;top:0;left:0;bottom:0;right:0;width:100%;height:100%;z-index:9999990}.gmodal-show{display:table}.gmodal-wrap,.gmodal-content{display:table-cell;width:33%}';
     injectStyle = function(id, data) {
       var el;
       el = $doc.getElementById(id);
@@ -151,7 +151,7 @@
         el.ontap = function(evt) {
           evt = evt || $win.event;
           evt.target = evt.target || evt.srcElement;
-          if (hasCls(evt.target, 'gmodal-wrap') || evt.target === el) {
+          if (hasCls(evt.target, 'gmodal-wrap gmodal-close') || evt.target === el) {
             gmodal.emit('tap', evt);
           }
           return false;
@@ -191,6 +191,7 @@
         if (!self.options) {
           return self;
         }
+        self.elWrapper.style.display = self.elWrapper.style.visibility = "";
         self.elWrapper.className = ($baseCls + " gmodal-show ") + (self.options.cls || '');
         self.emit('show');
         return this;
@@ -217,7 +218,7 @@
 
 }).call(this);
 
-}, {"emitter":2}],
+}, {"emitter":2,"./template.html":3,"./index.css":4}],
 2: [function(require, module, exports) {
 
 /**
@@ -381,5 +382,11 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
+}, {}],
+3: [function(require, module, exports) {
+module.exports = '<div class="gmodal-wrap gmodal-top">&nbsp;<div>\n<div class="gmodal-wrap gmodal-left"></div><div class="gmodal-content" id="gmodalContent"></div><div class="gmodal-wrap gmodal-right"></div>';
+}, {}],
+4: [function(require, module, exports) {
+module.exports = '.gmodal {\n    display: none;\n    overflow: hidden;\n    outline: 0;\n    -webkit-overflow-scrolling: touch;\n    position: fixed;\n    top: 0;\n    left: 0;\n    bottom: 0;\n    right: 0;\n    width: 100%;\n    height: 100%;\n    z-index: 9999990;  /* based on safari 16777271 */ \n}\n.gmodal-show { display: table }\n.gmodal-wrap,\n.gmodal-content {\n    display: table-cell;\n    width: 33%;\n}';
 }, {}]}, {}, {"1":""})
 );

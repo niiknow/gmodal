@@ -1,10 +1,10 @@
 ((win) ->
-  Emitter = require('emitter');
+  Emitter = require('emitter')
+  $tpl = require('./template.html')
+  $css = require('./index.css')
   $win = win;
   $doc = $win.document
   $baseCls = 'gmodal'
-  $tpl = '<div class="gmodal-wrap gmodal-top">&nbsp;<div><div class="gmodal-wrap gmodal-left"></div><div class="gmodal-content" id="gmodalContent"></div><div class="gmodal-wrap gmodal-right"></div>'
-  $css = '.gmodal{display:none;overflow:hidden;outline:0;-webkit-overflow-scrolling: touch;position:fixed;top:0;left:0;bottom:0;right:0;width:100%;height:100%;z-index:9999990}.gmodal-show{display:table}.gmodal-wrap,.gmodal-content{display:table-cell;width:33%}'
 
   injectStyle = (id, data) ->
     el = $doc.getElementById(id)
@@ -82,6 +82,9 @@
       if (!self.options)
         return self
      
+      # make sure nothing interfer to the visibility of this element
+      # then add class to display the element
+      self.elWrapper.style.display = self.elWrapper.style.visibility = ""
       self.elWrapper.className = "#{$baseCls} gmodal-show " + (self.options.cls || '')
       self.emit('show')
       @

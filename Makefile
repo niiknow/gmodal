@@ -18,7 +18,7 @@ DUOT = $(BINS)/duo-test -p test/server -R spec -P $(PORT) -c "make build.js"
 # Default target.
 #
 
-default: test
+default: build.js
 
 #
 # Clean.
@@ -26,7 +26,7 @@ default: test
 
 clean:
 	@rm -rf components $(BUILD)
-	@rm -f index.js
+	@rm -f index.js index.min.js
 	@rm -rf node_modules npm-debug.log
 #
 # Test with phantomjs.
