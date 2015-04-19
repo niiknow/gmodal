@@ -96,7 +96,9 @@
 
       self.elWrapper.className = "#{$baseCls}"
       self.emit('hide')
+      @
 
+    injectStyle: injectStyle
 
   Emitter(modal.prototype)
   result = new modal()

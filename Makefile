@@ -68,7 +68,7 @@ test-browser: $(BUILD)
 #
 
 index.js: node_modules $(SRC)
-	@$(DUO) --standalone gmodal --use duo-coffee src/index.coffee > index.js
+	@$(DUO) --use duo-coffee src/index.coffee > index.js
 	@$(MINIFY) index.js --output index.min.js
 
 #

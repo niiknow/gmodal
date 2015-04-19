@@ -1,12 +1,4 @@
-(function umd(require){
-  if ('object' == typeof exports) {
-    module.exports = require('1');
-  } else if ('function' == typeof define && define.amd) {
-    define(function(){ return require('1'); });
-  } else {
-    this['gmodal'] = require('1');
-  }
-})((function outer(modules, cache, entries){
+(function outer(modules, cache, entries){
 
   /**
    * Global
@@ -204,8 +196,11 @@
           return self;
         }
         self.elWrapper.className = "" + $baseCls;
-        return self.emit('hide');
+        self.emit('hide');
+        return this;
       };
+
+      modal.prototype.injectStyle = injectStyle;
 
       return modal;
 
@@ -389,4 +384,3 @@ module.exports = '<div class="gmodal-wrap gmodal-top">&nbsp;<div>\n<div class="g
 4: [function(require, module, exports) {
 module.exports = '.gmodal {\n    display: none;\n    overflow: hidden;\n    outline: 0;\n    -webkit-overflow-scrolling: touch;\n    position: fixed;\n    top: 0;\n    left: 0;\n    bottom: 0;\n    right: 0;\n    width: 100%;\n    height: 100%;\n    z-index: 9999990;  /* based on safari 16777271 */ \n}\n.gmodal-show { display: table }\n.gmodal-wrap,\n.gmodal-content {\n    display: table-cell;\n    width: 33%;\n}';
 }, {}]}, {}, {"1":""})
-);
