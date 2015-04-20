@@ -220,7 +220,7 @@
 
   result = new modal();
 
-  win.gmodal = result;
+  $win.gmodal = result;
 
   module.exports = result;
 
