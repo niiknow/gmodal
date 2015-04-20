@@ -9,9 +9,10 @@
     "web"
   ],
   "repository": "git://github.com/niiknow/gmodal.git",
-  "main": "index.js",
+  "main": "lib/index.js",
   "dependencies": {},
   "devDependencies": {
+    "coffee-script": "*",
     "component-coffee": "*",
     "duo": "0.8",
     "duo-test": "0.3",

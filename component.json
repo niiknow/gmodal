@@ -1,6 +1,5 @@
 {
   "name": "gmodal",
-  "main": "index.js",
   "repo": "niiknow/gmodal",
   "description": "Global modal.",
   "version": "1.0.0",
@@ -20,5 +19,9 @@
     "ianstormtaylor/sinon": "duo",
     "timoxley/next-tick": "*",
     "yields/gravy": "*"
-  }
+  },
+  "scripts": ["lib/index.js"],
+  "styles": ["src/index.css"],
+  "templates": ["src/template.html"],
+  "main": "lib/index.js"
 }

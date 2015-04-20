@@ -18,7 +18,8 @@ DUOT = $(BINS)/duo-test -p test/server -R spec -P $(PORT) -c "make build.js"
 # Default target.
 #
 
-default: build.js
+default: gmodal.js
+default: lib/index.js
 
 #
 # Clean.
@@ -26,7 +27,8 @@ default: build.js
 
 clean:
 	@rm -rf components $(BUILD)
-	@rm -f index.js index.min.js
+	@rm -f gmodal.js gmodal.min.js
+	@rm -rf lib
 	@rm -rf node_modules npm-debug.log
 #
 # Test with phantomjs.
@@ -42,7 +44,7 @@ test: $(BUILD)
 test-sauce: $(BUILD)
 	@$(DUOT) saucelabs \
 		--browsers $(BROWSER) \
-		--title index.js
+		--title lib/index.js
 
 #
 # Test in the browser.
@@ -64,13 +66,21 @@ test-browser: $(BUILD)
 .PHONY: test-sauce
 
 #
-# Target for `index.js` file.
+# Target for `gmodal.js` file.
 #
 
-index.js: node_modules $(SRC)
-	@$(DUO) --use duo-coffee src/index.coffee > index.js
-	@$(MINIFY) index.js --output index.min.js
+gmodal.js: node_modules $(SRC)
+	@$(DUO) --use duo-coffee src/index.coffee > gmodal.js
+	@$(MINIFY) gmodal.js --output gmodal.min.js
 
+#
+# Target for `*.js` file.
+#
+
+lib/%.js: node_modules $(SRC)
+	node_modules/coffee-script/bin/coffee --bare -c -o $(@D) $(patsubst lib/%,src/%,$(patsubst %.js,%.coffee,$@))
+
+#
 #
 # Target for `node_modules` folder.
 #
@@ -82,7 +92,7 @@ node_modules: package.json
 # Target for build files.
 #
 
-$(BUILD): $(TESTS) index.js
+$(BUILD): $(TESTS) lib/index.js
 	@$(DUO) --development test/tests.js > $(BUILD)
 
 #
