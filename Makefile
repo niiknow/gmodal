@@ -79,7 +79,6 @@ gmodal.js: node_modules $(SRC)
 
 lib/%.js: node_modules $(SRC)
 	node_modules/coffee-script/bin/coffee --bare -c -o $(@D) $(patsubst lib/%,src/%,$(patsubst %.js,%.coffee,$@))
-
 #
 #
 # Target for `node_modules` folder.

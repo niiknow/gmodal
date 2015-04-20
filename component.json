@@ -20,8 +20,5 @@
     "timoxley/next-tick": "*",
     "yields/gravy": "*"
   },
-  "scripts": ["lib/index.js"],
-  "styles": ["src/index.css"],
-  "templates": ["src/template.html"],
   "main": "lib/index.js"
 }
