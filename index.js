@@ -84,132 +84,145 @@
 })({
 1: [function(require, module, exports) {
 (function() {
-  (function(win) {
-    var $baseCls, $css, $doc, $tpl, $win, Emitter, createModal, hasCls, injectStyle, modal, result;
-    Emitter = require('emitter');
-    $tpl = require('./template.html');
-    $css = require('./index.css');
-    $win = win;
-    $doc = $win.document;
-    $baseCls = 'gmodal';
-    injectStyle = function(id, data) {
-      var el;
-      el = $doc.getElementById(id);
-      if (!el) {
-        el = $doc.createElement('style');
-        el.type = 'text/css';
-        el.appendChild($doc.createTextNode(data));
-        return ($doc.head || $doc.getElementsByTagName('head')[0]).appendChild(el);
+  var $baseCls, $css, $doc, $tpl, $win, Emitter, createModal, hasCls, injectStyle, modal, result;
+
+  Emitter = require('emitter');
+
+  $tpl = require('./template.html');
+
+  $css = require('./index.css');
+
+  $win = window;
+
+  $doc = $win.document;
+
+  $baseCls = 'gmodal';
+
+  injectStyle = function(id, data) {
+    var el;
+    el = $doc.getElementById(id);
+    if (!el) {
+      el = $doc.createElement('style');
+      el.type = 'text/css';
+      el.appendChild($doc.createTextNode(data));
+      return ($doc.head || $doc.getElementsByTagName('head')[0]).appendChild(el);
+    }
+  };
+
+  hasCls = function(el, cls) {
+    var i, k, len, ref, v;
+    ref = cls.split(' ');
+    for (k = i = 0, len = ref.length; i < len; k = ++i) {
+      v = ref[k];
+      if ((' ' + el.className).indexOf(' ' + v) >= 0) {
+        return true;
       }
-    };
-    hasCls = function(el, cls) {
-      var i, k, len, ref, v;
-      ref = cls.split(' ');
-      for (k = i = 0, len = ref.length; i < len; k = ++i) {
-        v = ref[k];
-        if ((' ' + el.className).indexOf(' ' + v) >= 0) {
-          return true;
+    }
+    return false;
+  };
+
+  createModal = function() {
+    var el, myKeypress;
+    el = $doc.getElementById("gmodal");
+    if (!el) {
+      injectStyle('gmodal-css', $css);
+      el = $doc.createElement('div');
+      el.id = 'gmodal';
+      el.onclick = function(evt) {
+        evt = evt || $win.event;
+        evt.target = evt.target || evt.srcElement;
+        if (hasCls(evt.target, 'gmodal-wrap gmodal-close') || evt.target === el) {
+          gmodal.emit('click', evt);
         }
-      }
-      return false;
-    };
-    createModal = function() {
-      var el, myKeypress;
-      el = $doc.getElementById("gmodal");
-      if (!el) {
-        injectStyle('gmodal-css', $css);
-        el = $doc.createElement('div');
-        el.id = 'gmodal';
-        el.onclick = function(evt) {
-          evt = evt || $win.event;
-          evt.target = evt.target || evt.srcElement;
-          if (hasCls(evt.target, 'gmodal-wrap gmodal-close') || evt.target === el) {
-            gmodal.emit('click', evt);
-          }
-          return false;
-        };
-        myKeypress = function(evt) {
-          evt = evt || $win.event;
-          evt.target = evt.target || evt.srcElement;
-          if (hasCls(evt.target, 'gmodal-wrap') || evt.target === el || evt.target === $doc || evt.target === $doc.body) {
-            if ((evt.which || evt.keyCode) === 27) {
-              gmodal.emit('esc', evt);
-            }
-          }
-          return false;
-        };
-        el.onkeypress = myKeypress;
-        $doc.onkeypress = myKeypress;
-        el.ontap = function(evt) {
-          evt = evt || $win.event;
-          evt.target = evt.target || evt.srcElement;
-          if (hasCls(evt.target, 'gmodal-wrap gmodal-close') || evt.target === el) {
-            gmodal.emit('tap', evt);
-          }
-          return false;
-        };
-        el.innerHTML = $tpl;
-        $doc.getElementsByTagName('body')[0].appendChild(el);
-      }
-      return el;
-    };
-
-    /**
-     * modal
-     */
-    modal = (function() {
-      function modal() {}
-
-      modal.prototype.elWrapper = null;
-
-      modal.prototype.el = null;
-
-      modal.prototype.options = {};
-
-      modal.prototype.show = function(options) {
-        var self;
-        self = this;
-        self.elWrapper = createModal();
-        if (!self.el) {
-          self.el = $doc.getElementById("gmodalContent");
-        }
-        if ((options != null)) {
-          self.options = options;
-          if ((self.options.content != null)) {
-            self.el.innerHTML = self.options.content;
-            self.options.content = null;
-          }
-        }
-        if (!self.options) {
-          return self;
-        }
-        self.elWrapper.style.display = self.elWrapper.style.visibility = "";
-        self.elWrapper.className = ($baseCls + " gmodal-show ") + (self.options.cls || '');
-        self.emit('show');
-        return this;
+        return false;
       };
-
-      modal.prototype.hide = function() {
-        var self;
-        self = this;
-        if (!self.elWrapper) {
-          return self;
+      myKeypress = function(evt) {
+        evt = evt || $win.event;
+        evt.target = evt.target || evt.srcElement;
+        if (hasCls(evt.target, 'gmodal-wrap') || evt.target === el || evt.target === $doc || evt.target === $doc.body) {
+          if ((evt.which || evt.keyCode) === 27) {
+            gmodal.emit('esc', evt);
+          }
         }
-        self.elWrapper.className = "" + $baseCls;
-        self.emit('hide');
-        return this;
+        return false;
       };
+      el.onkeypress = myKeypress;
+      $doc.onkeypress = myKeypress;
+      el.ontap = function(evt) {
+        evt = evt || $win.event;
+        evt.target = evt.target || evt.srcElement;
+        if (hasCls(evt.target, 'gmodal-wrap gmodal-close') || evt.target === el) {
+          gmodal.emit('tap', evt);
+        }
+        return false;
+      };
+      el.innerHTML = $tpl;
+      $doc.getElementsByTagName('body')[0].appendChild(el);
+    }
+    return el;
+  };
 
-      modal.prototype.injectStyle = injectStyle;
 
-      return modal;
+  /**
+   * modal
+   */
 
-    })();
-    Emitter(modal.prototype);
-    result = new modal();
-    win.gmodal = result;
-    return module.exports = result;
-  })(window);
+  modal = (function() {
+    function modal() {}
+
+    modal.prototype.elWrapper = null;
+
+    modal.prototype.el = null;
+
+    modal.prototype.options = {};
+
+    modal.prototype.show = function(options) {
+      var self;
+      self = this;
+      self.elWrapper = createModal();
+      if (!self.el) {
+        self.el = $doc.getElementById("gmodalContent");
+      }
+      if ((options != null)) {
+        self.options = options;
+        if ((self.options.content != null)) {
+          self.el.innerHTML = self.options.content;
+          self.options.content = null;
+        }
+      }
+      if (!self.options) {
+        return self;
+      }
+      self.elWrapper.style.display = self.elWrapper.style.visibility = "";
+      self.elWrapper.className = ($baseCls + " gmodal-show ") + (self.options.cls || '');
+      self.emit('show');
+      return this;
+    };
+
+    modal.prototype.hide = function() {
+      var self;
+      self = this;
+      if (!self.elWrapper) {
+        return self;
+      }
+      self.elWrapper.className = "" + $baseCls;
+      self.emit('hide');
+      return this;
+    };
+
+    modal.prototype.injectStyle = injectStyle;
+
+    return modal;
+
+  })();
+
+  Emitter(modal.prototype);
+
+  result = new modal();
+
+  win.gmodal = result;
+
+  module.exports = result;
 
 }).call(this);
 
