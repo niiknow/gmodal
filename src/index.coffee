@@ -4,6 +4,7 @@ $css = require('./index.css')
 $win = window;
 $doc = $win.document
 $baseCls = 'gmodal'
+$closeCls = 'gmodal-close'
 
 injectStyle = (id, data) ->
   el = $doc.getElementById(id)
@@ -28,14 +29,14 @@ createModal = () ->
     el.onclick = (evt) ->
       evt = evt || $win.event
       evt.target = evt.target || evt.srcElement;
-      if (hasCls(evt.target, 'gmodal-wrap gmodal-close') || evt.target == el)
+      if (hasCls(evt.target, "gmodal-wrap #{$closeCls}") || evt.target == el)
         gmodal.emit('click', evt)
       return false
 
     myKeypress = (evt) ->
       evt = evt || $win.event
       evt.target = evt.target || evt.srcElement;
-      if (hasCls(evt.target, 'gmodal-wrap')|| evt.target == el || evt.target == $doc || evt.target == $doc.body)
+      if (hasCls(evt.target, "gmodal-wrap")|| evt.target == el || evt.target == $doc || evt.target == $doc.body)
         if ((evt.which || evt.keyCode) == 27)
           gmodal.emit('esc', evt)
       return false
@@ -46,7 +47,7 @@ createModal = () ->
     el.ontap = (evt) ->
       evt = evt || $win.event
       evt.target = evt.target || evt.srcElement;
-      if (hasCls(evt.target, 'gmodal-wrap gmodal-close')|| evt.target == el)
+      if (hasCls(evt.target, "gmodal-wrap #{$closeCls}")|| evt.target == el)
         gmodal.emit('tap', evt)
       return false
 
@@ -80,6 +81,9 @@ class modal
     # return if previous options is empty
     if (!self.options)
       return self
+
+    if (self.options.closeCls)
+      $closeCls = self.options.closeCls
    
     # make sure nothing interfer to the visibility of this element
     # then add class to display the element
@@ -97,7 +101,11 @@ class modal
     self.emit('hide')
     @
 
+  # inject style
   injectStyle: injectStyle
+
+  # determine if it has class
+  hasCls: hasCls
 
 Emitter(modal.prototype)
 result = new modal()

@@ -84,7 +84,7 @@
 })({
 1: [function(require, module, exports) {
 (function() {
-  var $baseCls, $css, $doc, $tpl, $win, Emitter, createModal, hasCls, injectStyle, modal, result;
+  var $baseCls, $closeCls, $css, $doc, $tpl, $win, Emitter, createModal, hasCls, injectStyle, modal, result;
 
   Emitter = require('emitter');
 
@@ -97,6 +97,8 @@
   $doc = $win.document;
 
   $baseCls = 'gmodal';
+
+  $closeCls = 'gmodal-close';
 
   injectStyle = function(id, data) {
     var el;
@@ -131,7 +133,7 @@
       el.onclick = function(evt) {
         evt = evt || $win.event;
         evt.target = evt.target || evt.srcElement;
-        if (hasCls(evt.target, 'gmodal-wrap gmodal-close') || evt.target === el) {
+        if (hasCls(evt.target, "gmodal-wrap " + $closeCls) || evt.target === el) {
           gmodal.emit('click', evt);
         }
         return false;
@@ -139,7 +141,7 @@
       myKeypress = function(evt) {
         evt = evt || $win.event;
         evt.target = evt.target || evt.srcElement;
-        if (hasCls(evt.target, 'gmodal-wrap') || evt.target === el || evt.target === $doc || evt.target === $doc.body) {
+        if (hasCls(evt.target, "gmodal-wrap") || evt.target === el || evt.target === $doc || evt.target === $doc.body) {
           if ((evt.which || evt.keyCode) === 27) {
             gmodal.emit('esc', evt);
           }
@@ -151,7 +153,7 @@
       el.ontap = function(evt) {
         evt = evt || $win.event;
         evt.target = evt.target || evt.srcElement;
-        if (hasCls(evt.target, 'gmodal-wrap gmodal-close') || evt.target === el) {
+        if (hasCls(evt.target, "gmodal-wrap " + $closeCls) || evt.target === el) {
           gmodal.emit('tap', evt);
         }
         return false;
@@ -193,6 +195,9 @@
       if (!self.options) {
         return self;
       }
+      if (self.options.closeCls) {
+        $closeCls = self.options.closeCls;
+      }
       self.elWrapper.style.display = self.elWrapper.style.visibility = "";
       self.elWrapper.className = ($baseCls + " gmodal-show ") + (self.options.cls || '');
       self.emit('show');
@@ -211,6 +216,8 @@
     };
 
     modal.prototype.injectStyle = injectStyle;
+
+    modal.prototype.hasCls = hasCls;
 
     return modal;
 
