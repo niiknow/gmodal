@@ -83,10 +83,10 @@ class modal
     evt = evt || win.event
     tg = evt.target || evt.srcElement;
     if (tg.nodeType == 3) 
-        tg = evt.target.parentNode;
+        tg = tg.parentNode;
 
-    if (self.hasCls(evt.target.parentNode, "#{self.closeCls}"))
-      tg = evt.target.parentNode
+    if (self.hasCls(tg.parentNode, "#{self.closeCls}"))
+      tg = tg.parentNode
 
     scls = "gmodal-wrap #{self.closeCls}"
     if (name is 'click')
