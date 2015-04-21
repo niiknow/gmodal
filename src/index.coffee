@@ -63,7 +63,10 @@ class modal
       el = self.doc.createElement('style')
       el.id = id
       el.type = 'text/css'
-      el.appendChild self.doc.createTextNode(data)
+      if (el.styleSheet)
+        el.styleSheet.cssText = data;
+      else
+        el.appendChild self.doc.createTextNode(data)
       (self.doc.head or self.doc.getElementsByTagName('head')[0]).appendChild el
 
     @
