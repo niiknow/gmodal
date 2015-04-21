@@ -84,85 +84,13 @@
 })({
 1: [function(require, module, exports) {
 (function() {
-  var $baseCls, $closeCls, $css, $doc, $tpl, $win, Emitter, createModal, hasCls, injectStyle, modal, result;
+  var Emitter, domify, gmodal, modal, win;
 
   Emitter = require('emitter');
 
-  $tpl = '<div class="gmodal-wrap gmodal-top">&nbsp;<div>\n<div class="gmodal-wrap gmodal-left"></div><div class="gmodal-content" id="gmodalContent"></div><div class="gmodal-wrap gmodal-right"></div>';
+  domify = require('domify');
 
-  $css = '.gmodal {\n    display: none;\n    overflow: hidden;\n    outline: 0;\n    -webkit-overflow-scrolling: touch;\n    position: fixed;\n    top: 0;\n    left: 0;\n    bottom: 0;\n    right: 0;\n    width: 100%;\n    height: 100%;\n    z-index: 9999990;  /* based on safari 16777271 */ \n}\n.gmodal-show { display: table }\n.gmodal-wrap,\n.gmodal-content {\n    display: table-cell;\n    width: 33%;\n}';
-
-  $win = window;
-
-  $doc = $win.document;
-
-  $baseCls = 'gmodal';
-
-  $closeCls = 'gmodal-close';
-
-  injectStyle = function(id, data) {
-    var el;
-    el = $doc.getElementById(id);
-    if (!el) {
-      el = $doc.createElement('style');
-      el.type = 'text/css';
-      el.appendChild($doc.createTextNode(data));
-      return ($doc.head || $doc.getElementsByTagName('head')[0]).appendChild(el);
-    }
-  };
-
-  hasCls = function(el, cls) {
-    var i, k, len, ref, v;
-    ref = cls.split(' ');
-    for (k = i = 0, len = ref.length; i < len; k = ++i) {
-      v = ref[k];
-      if ((' ' + el.className).indexOf(' ' + v) >= 0) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  createModal = function() {
-    var el, myKeypress;
-    el = $doc.getElementById("gmodal");
-    if (!el) {
-      injectStyle('gmodal-css', $css);
-      el = $doc.createElement('div');
-      el.id = 'gmodal';
-      el.onclick = function(evt) {
-        evt = evt || $win.event;
-        evt.target = evt.target || evt.srcElement;
-        if (hasCls(evt.target, "gmodal-wrap " + $closeCls) || evt.target === el) {
-          gmodal.emit('click', evt);
-        }
-        return false;
-      };
-      myKeypress = function(evt) {
-        evt = evt || $win.event;
-        evt.target = evt.target || evt.srcElement;
-        if (hasCls(evt.target, "gmodal-wrap") || evt.target === el || evt.target === $doc || evt.target === $doc.body) {
-          if ((evt.which || evt.keyCode) === 27) {
-            gmodal.emit('esc', evt);
-          }
-        }
-        return false;
-      };
-      el.onkeypress = myKeypress;
-      $doc.onkeypress = myKeypress;
-      el.ontap = function(evt) {
-        evt = evt || $win.event;
-        evt.target = evt.target || evt.srcElement;
-        if (hasCls(evt.target, "gmodal-wrap " + $closeCls) || evt.target === el) {
-          gmodal.emit('tap', evt);
-        }
-        return false;
-      };
-      el.innerHTML = $tpl;
-      $doc.getElementsByTagName('body')[0].appendChild(el);
-    }
-    return el;
-  };
+  win = window;
 
 
   /**
@@ -172,23 +100,36 @@
   modal = (function() {
     function modal() {}
 
+    modal.prototype.doc = win.document;
+
     modal.prototype.elWrapper = null;
 
     modal.prototype.el = null;
 
     modal.prototype.options = {};
 
+    modal.prototype.baseCls = 'gmodal';
+
+    modal.prototype.closeCls = 'gmodal-close';
+
+    modal.prototype.tpl = '<div class="gmodal-wrap gmodal-top">&nbsp;<div>\n<div class="gmodal-wrap gmodal-left"></div><div class="gmodal-content" id="gmodalContent"></div><div class="gmodal-wrap gmodal-right"></div>';
+
+    modal.prototype.css = '.gmodal {\n    display: none;\n    overflow: hidden;\n    outline: 0;\n    -webkit-overflow-scrolling: touch;\n    position: fixed;\n    top: 0;\n    left: 0;\n    bottom: 0;\n    right: 0;\n    width: 100%;\n    height: 100%;\n    z-index: 9999990;  /* based on safari 16777271 */ \n}\n.gmodal-show { display: table }\n.gmodal-wrap,\n.gmodal-content {\n    display: table-cell;\n    width: 33%;\n}';
+
     modal.prototype.show = function(options) {
       var self;
       self = this;
-      self.elWrapper = createModal();
+      self.elWrapper = self.createModal();
       if (!self.el) {
-        self.el = $doc.getElementById("gmodalContent");
+        self.el = self.doc.getElementById("gmodalContent");
       }
       if ((options != null)) {
         self.options = options;
         if ((self.options.content != null)) {
-          self.el.innerHTML = self.options.content;
+          while (self.el.firstChild) {
+            self.el.removeChild(self.el.firstChild);
+          }
+          self.el.appendChild(domify(self.options.content));
           self.options.content = null;
         }
       }
@@ -196,10 +137,10 @@
         return self;
       }
       if (self.options.closeCls) {
-        $closeCls = self.options.closeCls;
+        self.closeCls = self.options.closeCls;
       }
       self.elWrapper.style.display = self.elWrapper.style.visibility = "";
-      self.elWrapper.className = ($baseCls + " gmodal-show ") + (self.options.cls || '');
+      self.elWrapper.className = (self.baseCls + " gmodal-show ") + (self.options.cls || '');
       self.emit('show');
       return this;
     };
@@ -210,14 +151,99 @@
       if (!self.elWrapper) {
         return self;
       }
-      self.elWrapper.className = "" + $baseCls;
+      self.elWrapper.className = "" + self.baseCls;
       self.emit('hide');
       return this;
     };
 
-    modal.prototype.injectStyle = injectStyle;
+    modal.prototype.injectStyle = function(id, data) {
+      var el, self;
+      self = this;
+      el = self.doc.getElementById(id);
+      if (!el) {
+        el = self.doc.createElement('style');
+        el.id = id;
+        el.type = 'text/css';
+        el.appendChild(self.doc.createTextNode(data));
+        (self.doc.head || self.doc.getElementsByTagName('head')[0]).appendChild(el);
+      }
+      return this;
+    };
 
-    modal.prototype.hasCls = hasCls;
+    modal.prototype.hasCls = function(el, cls) {
+      var i, k, len, ref, v;
+      ref = cls.split(' ');
+      for (k = i = 0, len = ref.length; i < len; k = ++i) {
+        v = ref[k];
+        if ((' ' + el.className).indexOf(' ' + v) >= 0) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    modal.prototype.checkEvent = function(name, evt, el) {
+      var scls, self, tg;
+      self = this;
+      evt = evt || win.event;
+      tg = evt.target || evt.srcElement;
+      if (tg.nodeType === 3) {
+        tg = evt.target.parentNode;
+      }
+      if (self.hasCls(evt.target.parentNode, "" + self.closeCls)) {
+        tg = evt.target.parentNode;
+      }
+      scls = "gmodal-wrap " + self.closeCls;
+      if (name === 'click') {
+        if (self.hasCls(tg, scls) || tg === el) {
+          self.emit('click', evt);
+        }
+      } else if (name === 'keypress') {
+        if (self.hasCls(tg, scls) || tg === el || tg === sel.doc || tg === self.doc.body) {
+          if ((evt.which || evt.keyCode) === 27) {
+            self.emit('esc', evt);
+          }
+        }
+      } else if (name === 'tap') {
+        if (self.hasCls(tg, scls) || tg === el) {
+          self.emit('tap', evt);
+        }
+      }
+      return false;
+    };
+
+    modal.prototype.createModal = function() {
+      var el, myKeypress, oldkp, self;
+      self = this;
+      el = self.doc.getElementById("gmodal");
+      if (!el) {
+        self.injectStyle('gmodal-css', self.css);
+        el = self.doc.createElement('div');
+        el.id = 'gmodal';
+        el.onclick = function(evt) {
+          return self.checkEvent('click', evt, el);
+        };
+        myKeypress = function(evt) {
+          return self.checkEvent('keypress', evt, el);
+        };
+        el.onkeypress = myKeypress;
+        if (typeof self.doc.onkeypress === 'function') {
+          oldkp = self.doc.onkeypress;
+          self.doc.onkeypress = function(evt) {
+            oldkp(evt);
+            return myKeypress(evt);
+          };
+        } else {
+          self.doc.onkeypress = myKeypress;
+        }
+        el.ontap = function(evt) {
+          return self.checkEvent('tap', evt, el);
+        };
+        el.appendChild(domify(self.tpl));
+        self.doc.getElementsByTagName('body')[0].appendChild(el);
+      }
+      return el;
+    };
 
     return modal;
 
@@ -225,15 +251,15 @@
 
   Emitter(modal.prototype);
 
-  result = new modal();
+  gmodal = new modal();
 
-  $win.gmodal = result;
+  win.gmodal = gmodal;
 
-  module.exports = result;
+  module.exports = gmodal;
 
 }).call(this);
 
-}, {"emitter":2}],
+}, {"emitter":2,"domify":3}],
 2: [function(require, module, exports) {
 
 /**
@@ -396,5 +422,116 @@ Emitter.prototype.listeners = function(event){
 Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
+
+}, {}],
+3: [function(require, module, exports) {
+
+/**
+ * Expose `parse`.
+ */
+
+module.exports = parse;
+
+/**
+ * Tests for browser support.
+ */
+
+var div = document.createElement('div');
+// Setup
+div.innerHTML = '  <link/><table></table><a href="/a">a</a><input type="checkbox"/>';
+// Make sure that link elements get serialized correctly by innerHTML
+// This requires a wrapper element in IE
+var innerHTMLBug = !div.getElementsByTagName('link').length;
+div = undefined;
+
+/**
+ * Wrap map from jquery.
+ */
+
+var map = {
+  legend: [1, '<fieldset>', '</fieldset>'],
+  tr: [2, '<table><tbody>', '</tbody></table>'],
+  col: [2, '<table><tbody></tbody><colgroup>', '</colgroup></table>'],
+  // for script/link/style tags to work in IE6-8, you have to wrap
+  // in a div with a non-whitespace character in front, ha!
+  _default: innerHTMLBug ? [1, 'X<div>', '</div>'] : [0, '', '']
+};
+
+map.td =
+map.th = [3, '<table><tbody><tr>', '</tr></tbody></table>'];
+
+map.option =
+map.optgroup = [1, '<select multiple="multiple">', '</select>'];
+
+map.thead =
+map.tbody =
+map.colgroup =
+map.caption =
+map.tfoot = [1, '<table>', '</table>'];
+
+map.polyline =
+map.ellipse =
+map.polygon =
+map.circle =
+map.text =
+map.line =
+map.path =
+map.rect =
+map.g = [1, '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">','</svg>'];
+
+/**
+ * Parse `html` and return a DOM Node instance, which could be a TextNode,
+ * HTML DOM Node of some kind (<div> for example), or a DocumentFragment
+ * instance, depending on the contents of the `html` string.
+ *
+ * @param {String} html - HTML string to "domify"
+ * @param {Document} doc - The `document` instance to create the Node for
+ * @return {DOMNode} the TextNode, DOM Node, or DocumentFragment instance
+ * @api private
+ */
+
+function parse(html, doc) {
+  if ('string' != typeof html) throw new TypeError('String expected');
+
+  // default to the global `document` object
+  if (!doc) doc = document;
+
+  // tag name
+  var m = /<([\w:]+)/.exec(html);
+  if (!m) return doc.createTextNode(html);
+
+  html = html.replace(/^\s+|\s+$/g, ''); // Remove leading/trailing whitespace
+
+  var tag = m[1];
+
+  // body support
+  if (tag == 'body') {
+    var el = doc.createElement('html');
+    el.innerHTML = html;
+    return el.removeChild(el.lastChild);
+  }
+
+  // wrap map
+  var wrap = map[tag] || map._default;
+  var depth = wrap[0];
+  var prefix = wrap[1];
+  var suffix = wrap[2];
+  var el = doc.createElement('div');
+  el.innerHTML = prefix + html + suffix;
+  while (depth--) el = el.lastChild;
+
+  // one element
+  if (el.firstChild == el.lastChild) {
+    return el.removeChild(el.firstChild);
+  }
+
+  // several elements
+  var fragment = doc.createDocumentFragment();
+  while (el.firstChild) {
+    fragment.appendChild(el.removeChild(el.firstChild));
+  }
+
+  return fragment;
+}
 
 }, {}]}, {}, {"1":""})
