@@ -13,7 +13,7 @@ class modal
   baseCls: 'gmodal'
   closeCls: 'gmodal-close'
   tpl: '<div class="gmodal-wrap gmodal-top">&nbsp;<div><div class="gmodal-wrap gmodal-left"></div><div class="gmodal-content" id="gmodalContent"></div><div class="gmodal-wrap gmodal-right"></div>'
-  css: '.gmodal{display:none;overflow:hidden;outline:0;-webkit-overflow-scrolling:touch;position:fixed;top:0;left:0;bottom:0;right:0;width:100%;height:100%;z-index:9999990}.gmodal-show{display:table}.gmodal-content,.gmodal-wrap{display:table-cell}.gmodal-wrap{width:50%}'
+  css: '.gmodal{display:none;overflow:hidden;outline:0;-webkit-overflow-scrolling:touch;position:fixed;top:0;left:0;bottom:0;right:0;width:100%;height:100%;z-index:9999990}.body-gmodal .gmodal{display:table}.body-gmodal{overflow:hidden}.gmodal-content,.gmodal-wrap{display:table-cell}.gmodal-wrap{width:50%}'
   show: (options) ->
     self = @
     self.elWrapper = self.createModal()
@@ -46,7 +46,9 @@ class modal
     # make sure nothing interfer to the visibility of this element
     # then add class to display the element
     self.elWrapper.style.display = self.elWrapper.style.visibility = ""
-    self.elWrapper.className = "#{self.baseCls} gmodal-show " + (self.options.cls || '')
+    self.elWrapper.className = "#{self.baseCls} " + (self.options.cls || '')
+    eCls = self.doc.getElementsByTagName('body')[0].className
+    self.doc.getElementsByTagName('body')[0].className = "#{eCls} body-gmodal"
     self.emit('show')
     @
 
@@ -56,6 +58,8 @@ class modal
       return self
 
     self.elWrapper.className = "#{self.baseCls}"
+    eCls = self.doc.getElementsByTagName('body')[0].className
+    self.doc.getElementsByTagName('body')[0].className = eCls.replace(/\s+body\-gmodal/gi, '')
     self.emit('hide')
     @
 
