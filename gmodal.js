@@ -129,7 +129,11 @@
           while (self.el.firstChild) {
             self.el.removeChild(self.el.firstChild);
           }
-          self.el.appendChild(domify(self.options.content));
+          if (typeof self.options.content === 'string') {
+            self.el.appendChild(domify(self.options.content));
+          } else {
+            self.el.appendChild(self.options.content);
+          }
           self.options.content = null;
         }
       }

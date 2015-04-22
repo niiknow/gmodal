@@ -29,7 +29,11 @@ class modal
         while self.el.firstChild
           self.el.removeChild self.el.firstChild
 
-        self.el.appendChild domify(self.options.content)
+        if (typeof self.options.content is 'string')
+          self.el.appendChild domify(self.options.content)
+        else # must already be an element
+          self.el.appendChild self.options.content
+
         self.options.content = null
 
     # return if previous options is empty
@@ -101,8 +105,6 @@ class modal
         self.emit('tap', evt)
 
     return false
-
-
 
   createModal: () ->
     self = @
