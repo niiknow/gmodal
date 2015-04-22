@@ -16,5 +16,7 @@
 .gmodal-wrap,
 .gmodal-content {
     display: table-cell;
-    width: 33%;
+}
+.gmodal-wrap {
+    width: 50%;
 }
