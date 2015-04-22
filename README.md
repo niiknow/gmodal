@@ -15,16 +15,14 @@ In order to attain cross-browser compatibility, gmodal template uses a grid syst
 template is as followed:
 ```
 gmodal
-  gmodal-top 
   gmodal-left gmodal-content gmodal-right
 ```
   
 ## css classes
-* *gmodal* - the primary overlay/wrapper
-* *gmodal-top* (1st row - allow you to add 'padding-top' css separate from content)
-* *gmodal-left* (2nd row - left collumn - allow for left padding - default 33%)
-* *gmodal-content* (2nd row - middle collumn - content container - default 33%)
-* *gmodal-right* (2nd row - right column - allow for right padding - default 33%)
+* *gmodal* - the primary overlay/wrapper - default padding-top of 50px
+* *gmodal-left* (2nd row - left collumn - allow for left padding - default 50%)
+* *gmodal-content* (2nd row - middle collumn - content container)
+* *gmodal-right* (2nd row - right column - allow for right padding - default 50%)
 * *gmodal-close* class can be use to tag element for close on click.  You can also use the gmodal.close method directly.
 ```
 <button class="gmodal-close">x</button>
@@ -48,8 +46,8 @@ the wrapper of your modal content.
 
 As you can see, you have full control over your modal content and CSS.  Therefore,
 you can provide your own CSS to support responsive UI.  When providing your own css,
-remember to take into account for the gmodal classes such as: gmodal-top, gmodal-left,
-and gmodal-right.
+remember to take into account for the gmodal classes such as: gmodal-left,
+and gmodal-right.  Add padding-top to your .gmodal class to vertically asign your modal.
 
 With the flexbility, you can have modal content as any valid html content including
 iframe and spinner gif. 
