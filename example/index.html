@@ -54,14 +54,11 @@
 	gmodal.on('tap', gmodal.hide);
 
 	setTimeout(function() {
-		gmodal.show({content: '<div class="myModalContent">this is a wizard <button class="gmodal-close">next</button></div>'},
-			function() {
-				gmodal.show({content: '<div class="myModalContent">wizard step 2 <button class="gmodal-close">next</button></div>'},
-					function(){
-						gmodal.show({content: '<div class="myModalContent">wizard step 3 <button class="gmodal-close">next</button></div>'})
-					})
-			})
-	}, 500)
+		// pushes a bunch of modal in for a wizard scenario
+		gmodal.show({content: '<div class="myModalContent">wizard step 1 <button class="gmodal-close">next</button></div>'})
+		gmodal.show({content: '<div class="myModalContent">wizard step 2 <button class="gmodal-close">next</button></div>'})
+		gmodal.show({content: '<div class="myModalContent">wizard step 3 <button class="gmodal-close">next</button></div>'})
+	}, 1000)
 		
 	function showModal1() {
 		// you don't need no stinking jquery

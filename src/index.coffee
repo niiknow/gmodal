@@ -2,7 +2,6 @@ Emitter = require('emitter')
 domify = require('domify')
 trim = require('trim')
 win = window
-
 modals = []
 
 checkEvent = (self, name, evt, el) ->
@@ -80,13 +79,13 @@ class modal
     if (!self.el)
       self.el = self.doc.getElementById("gmodalContent")
 
-    if (self.isVisible)
-      return false
-
     if (opts)
       opts.hideCallback = hideCb
       modals.push(opts)
  
+    if (self.isVisible)
+      return false
+
     if (modals.length > 0)
       opts = modals.shift()
 
@@ -119,10 +118,9 @@ class modal
     self.elWrapper.className = trim("#{self.baseCls} " + (self.opts.cls || ''))
     eCls = self.doc.getElementsByTagName('body')[0].className
     self.doc.getElementsByTagName('body')[0].className = trim("#{eCls} body-gmodal")
-    self.isVisible = true
     self.emit('show', self)
 
-    return self.isVisible
+    return self.isVisible = true
 
   hide: () ->
     self = @
@@ -135,6 +133,10 @@ class modal
     self.emit('hide', self)
     if (typeof self.opts.hideCallback is 'function')
       self.opts.hideCallback(self)
+
+    if (modals.length > 0)
+      self.show()
+
     @
 
   # inject style
