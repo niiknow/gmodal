@@ -84,7 +84,7 @@
 })({
 1: [function(require, module, exports) {
 (function() {
-  var Emitter, domify, gmodal, modal, trim, win;
+  var Emitter, checkEvent, createModal, domify, gmodal, modal, modals, trim, win;
 
   Emitter = require('emitter');
 
@@ -93,6 +93,69 @@
   trim = require('trim');
 
   win = window;
+
+  modals = [];
+
+  checkEvent = function(self, name, evt, el) {
+    var scls, tg;
+    evt = evt || win.event;
+    tg = evt.target || evt.srcElement;
+    if (tg.nodeType === 3) {
+      tg = tg.parentNode;
+    }
+    if (self.hasCls(tg.parentNode, "" + self.closeCls)) {
+      tg = tg.parentNode;
+    }
+    scls = "gmodal-wrap " + self.closeCls;
+    if (name === 'click') {
+      if (self.hasCls(tg, scls) || tg === el) {
+        self.emit('click', tg, evt);
+      }
+    } else if (name === 'keypress') {
+      if (self.hasCls(tg, scls) || tg === el || tg === sel.doc || tg === self.doc.body) {
+        if ((evt.which || evt.keyCode) === 27) {
+          self.emit('esc', tg, evt);
+        }
+      }
+    } else if (name === 'tap') {
+      if (self.hasCls(tg, scls) || tg === el) {
+        self.emit('tap', tg, evt);
+      }
+    }
+    return false;
+  };
+
+  createModal = function(self) {
+    var el, myKeypress, oldkp;
+    el = self.doc.getElementById("gmodal");
+    if (!el) {
+      self.injectStyle('gmodalcss', self.css);
+      el = self.doc.createElement('div');
+      el.id = 'gmodal';
+      el.onclick = function(evt) {
+        return checkEvent(self, 'click', evt, el);
+      };
+      myKeypress = function(evt) {
+        return checkEvent(self, 'keypress', evt, el);
+      };
+      el.onkeypress = myKeypress;
+      if (typeof self.doc.onkeypress === 'function') {
+        oldkp = self.doc.onkeypress;
+        self.doc.onkeypress = function(evt) {
+          oldkp(evt);
+          return myKeypress(evt);
+        };
+      } else {
+        self.doc.onkeypress = myKeypress;
+      }
+      el.ontap = function(evt) {
+        return checkEvent(self, 'tap', evt, el);
+      };
+      el.appendChild(domify(self.tpl));
+      self.doc.getElementsByTagName('body')[0].appendChild(el);
+    }
+    return el;
+  };
 
 
   /**
@@ -108,7 +171,7 @@
 
     modal.prototype.el = null;
 
-    modal.prototype.options = {};
+    modal.prototype.opts = {};
 
     modal.prototype.baseCls = 'gmodal';
 
@@ -118,45 +181,52 @@
 
     modal.prototype.css = '.gmodal{display:none;overflow:hidden;outline:0;-webkit-overflow-scrolling:touch;position:fixed;top:0;left:0;bottom:0;right:0;width:100%;height:100%;z-index:9999990}.body-gmodal .gmodal{display:table}.body-gmodal{overflow:hidden}.gmodal-content,.gmodal-wrap{display:table-cell;position:relative;vertical-align: middle}.gmodal-left,.gmodal-right{width:50%}';
 
-    modal.prototype.show = function(options, hideCb) {
+    modal.prototype.show = function(opts, hideCb) {
       var eCls, self;
       self = this;
-      self.elWrapper = self.createModal();
+      if (!self.doc || !self.doc.body) {
+        return false;
+      }
+      self.elWrapper = createModal(self);
       if (!self.el) {
         self.el = self.doc.getElementById("gmodalContent");
       }
       if (self.isVisible) {
         return false;
       }
-      if ((options != null)) {
-        self.options = options;
-        if ((self.options.content != null)) {
+      if (opts) {
+        opts.hideCallback = hideCb;
+        modals.push(opts);
+      }
+      if (modals.length > 0) {
+        opts = modals.shift();
+      }
+      if ((opts != null)) {
+        self.opts = opts;
+        if ((self.opts.content != null)) {
           while (self.el.firstChild) {
             self.el.removeChild(self.el.firstChild);
           }
-          if (typeof self.options.content === 'string') {
-            self.el.appendChild(domify(self.options.content));
+          if (typeof self.opts.content === 'string') {
+            self.el.appendChild(domify(self.opts.content));
           } else {
-            self.el.appendChild(self.options.content);
+            self.el.appendChild(self.opts.content);
           }
-          self.options.content = null;
+          self.opts.content = null;
         }
       }
-      if (!self.options) {
+      if (!self.opts) {
         return false;
       }
-      if (self.options.closeCls) {
-        self.closeCls = self.options.closeCls;
+      if (self.opts.closeCls) {
+        self.closeCls = self.opts.closeCls;
       }
       self.elWrapper.style.display = self.elWrapper.style.visibility = "";
-      self.elWrapper.className = trim((self.baseCls + " ") + (self.options.cls || ''));
+      self.elWrapper.className = trim((self.baseCls + " ") + (self.opts.cls || ''));
       eCls = self.doc.getElementsByTagName('body')[0].className;
       self.doc.getElementsByTagName('body')[0].className = trim(eCls + " body-gmodal");
       self.isVisible = true;
       self.emit('show', self);
-      if (hideCb) {
-        self.once('hide', hideCb);
-      }
       return self.isVisible;
     };
 
@@ -171,6 +241,9 @@
       self.doc.getElementsByTagName('body')[0].className = trim(eCls.replace(/body\-gmodal/gi, ''));
       self.isVisible = false;
       self.emit('hide', self);
+      if (typeof self.opts.hideCallback === 'function') {
+        self.opts.hideCallback(self);
+      }
       return this;
     };
 
@@ -204,69 +277,6 @@
         }
       }
       return false;
-    };
-
-    modal.prototype.checkEvent = function(name, evt, el) {
-      var scls, self, tg;
-      self = this;
-      evt = evt || win.event;
-      tg = evt.target || evt.srcElement;
-      if (tg.nodeType === 3) {
-        tg = tg.parentNode;
-      }
-      if (self.hasCls(tg.parentNode, "" + self.closeCls)) {
-        tg = tg.parentNode;
-      }
-      scls = "gmodal-wrap " + self.closeCls;
-      if (name === 'click') {
-        if (self.hasCls(tg, scls) || tg === el) {
-          self.emit('click', evt);
-        }
-      } else if (name === 'keypress') {
-        if (self.hasCls(tg, scls) || tg === el || tg === sel.doc || tg === self.doc.body) {
-          if ((evt.which || evt.keyCode) === 27) {
-            self.emit('esc', evt);
-          }
-        }
-      } else if (name === 'tap') {
-        if (self.hasCls(tg, scls) || tg === el) {
-          self.emit('tap', evt);
-        }
-      }
-      return false;
-    };
-
-    modal.prototype.createModal = function() {
-      var el, myKeypress, oldkp, self;
-      self = this;
-      el = self.doc.getElementById("gmodal");
-      if (!el) {
-        self.injectStyle('gmodalcss', self.css);
-        el = self.doc.createElement('div');
-        el.id = 'gmodal';
-        el.onclick = function(evt) {
-          return self.checkEvent('click', evt, el);
-        };
-        myKeypress = function(evt) {
-          return self.checkEvent('keypress', evt, el);
-        };
-        el.onkeypress = myKeypress;
-        if (typeof self.doc.onkeypress === 'function') {
-          oldkp = self.doc.onkeypress;
-          self.doc.onkeypress = function(evt) {
-            oldkp(evt);
-            return myKeypress(evt);
-          };
-        } else {
-          self.doc.onkeypress = myKeypress;
-        }
-        el.ontap = function(evt) {
-          return self.checkEvent('tap', evt, el);
-        };
-        el.appendChild(domify(self.tpl));
-        self.doc.getElementsByTagName('body')[0].appendChild(el);
-      }
-      return el;
     };
 
     return modal;

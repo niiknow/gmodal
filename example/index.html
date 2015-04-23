@@ -24,7 +24,6 @@
 		background: rgba(0,0,0,0.75);
 	}
 
-    /* custom css: camel casing to separate between custom and bootstrap */
 	.myModalContent {
 		filter: alpha(opacity=1); /* IE8 */
 		background: #fff; /* IE8 */
@@ -50,15 +49,27 @@
 
 	<script type="text/javascript" src="../gmodal.js"></script>
 	<script type="text/javascript">
+	gmodal.on('click', gmodal.hide);
+	gmodal.on('esc', gmodal.hide);
+	gmodal.on('tap', gmodal.hide);
+
+	setTimeout(function() {
+		gmodal.show({content: '<div class="myModalContent">this is a wizard <button class="gmodal-close">next</button></div>'},
+			function() {
+				gmodal.show({content: '<div class="myModalContent">wizard step 2 <button class="gmodal-close">next</button></div>'},
+					function(){
+						gmodal.show({content: '<div class="myModalContent">wizard step 3 <button class="gmodal-close">next</button></div>'})
+					})
+			})
+	}, 500)
+		
 	function showModal1() {
 		// you don't need no stinking jquery
 		gmodal.show({content: document.getElementById('modal1-content').innerHTML});
-		gmodal.on('click', gmodal.hide);
 	}
 	function showModal2() {
 		// you don't need no stinking jquery
 		gmodal.show({content: document.getElementById('modal2-content').innerHTML});
-		gmodal.on('click', gmodal.hide);
 	}
 	</script>
 </head>
