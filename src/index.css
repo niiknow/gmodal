@@ -12,7 +12,7 @@
     height: 100%;
     z-index: 9999990;  /* based on safari 16777271 */ 
 }
-.body-gmodal { overflow: hidden; }
 .body-gmodal .gmodal { display: table; }
+.body-gmodal { overflow: hidden; }
 .gmodal-wrap { display: table-cell; position: relative; vertical-align: middle; }
 .gmodal-left, .gmodal-right { width: 50%; }
