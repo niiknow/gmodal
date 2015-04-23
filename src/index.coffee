@@ -135,10 +135,10 @@ class modal
     if (!self.opts and !opts)
       return false
 
-    if (self.opts.timeout)
+    if ((self.opts or opts).timeout)
       setTimeout ->
         showModalInternal self, opts
-      , self.opts.timeout
+      , (self.opts or opts).timeout
     else
       showModalInternal self, opts
 

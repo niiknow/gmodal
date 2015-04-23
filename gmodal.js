@@ -245,10 +245,10 @@
       if (!self.opts && !opts) {
         return false;
       }
-      if (self.opts.timeout) {
+      if ((self.opts || opts).timeout) {
         setTimeout(function() {
           return showModalInternal(self, opts);
-        }, self.opts.timeout);
+        }, (self.opts || opts).timeout);
       } else {
         showModalInternal(self, opts);
       }
