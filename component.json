@@ -8,8 +8,9 @@
     "web"
   ],
   "dependencies": {
+    "component/domify": "*",
     "component/emitter": "*",
-    "component/domify": "*"
+    "component/trim": "*"
   },
   "development": {
     "yields/coverage": "*",

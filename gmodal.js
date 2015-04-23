@@ -84,11 +84,13 @@
 })({
 1: [function(require, module, exports) {
 (function() {
-  var Emitter, domify, gmodal, modal, win;
+  var Emitter, domify, gmodal, modal, trim, win;
 
   Emitter = require('emitter');
 
   domify = require('domify');
+
+  trim = require('trim');
 
   win = window;
 
@@ -116,12 +118,15 @@
 
     modal.prototype.css = '.gmodal{display:none;overflow:hidden;outline:0;-webkit-overflow-scrolling:touch;position:fixed;top:0;left:0;bottom:0;right:0;width:100%;height:100%;z-index:9999990}.body-gmodal .gmodal{display:table}.body-gmodal{overflow:hidden}.gmodal-content,.gmodal-wrap{display:table-cell;position:relative;vertical-align: middle}.gmodal-left,.gmodal-right{width:50%}';
 
-    modal.prototype.show = function(options) {
+    modal.prototype.show = function(options, hideCb) {
       var eCls, self;
       self = this;
       self.elWrapper = self.createModal();
       if (!self.el) {
         self.el = self.doc.getElementById("gmodalContent");
+      }
+      if (self.isVisible) {
+        return false;
       }
       if ((options != null)) {
         self.options = options;
@@ -138,17 +143,21 @@
         }
       }
       if (!self.options) {
-        return self;
+        return false;
       }
       if (self.options.closeCls) {
         self.closeCls = self.options.closeCls;
       }
       self.elWrapper.style.display = self.elWrapper.style.visibility = "";
-      self.elWrapper.className = (self.baseCls + " ") + (self.options.cls || '');
+      self.elWrapper.className = trim((self.baseCls + " ") + (self.options.cls || ''));
       eCls = self.doc.getElementsByTagName('body')[0].className;
-      self.doc.getElementsByTagName('body')[0].className = eCls + " body-gmodal";
-      self.emit('show');
-      return this;
+      self.doc.getElementsByTagName('body')[0].className = trim(eCls + " body-gmodal");
+      self.isVisible = true;
+      self.emit('show', self);
+      if (hideCb) {
+        self.once('hide', hideCb);
+      }
+      return self.isVisible;
     };
 
     modal.prototype.hide = function() {
@@ -159,13 +168,14 @@
       }
       self.elWrapper.className = "" + self.baseCls;
       eCls = self.doc.getElementsByTagName('body')[0].className;
-      self.doc.getElementsByTagName('body')[0].className = eCls.replace(/\s+body\-gmodal/gi, '');
-      self.emit('hide');
+      self.doc.getElementsByTagName('body')[0].className = trim(eCls.replace(/body\-gmodal/gi, ''));
+      self.isVisible = false;
+      self.emit('hide', self);
       return this;
     };
 
-    modal.prototype.injectStyle = function(id, data) {
-      var el, self;
+    modal.prototype.injectStyle = function(id, css) {
+      var el, elx, self;
       self = this;
       el = self.doc.getElementById(id);
       if (!el) {
@@ -173,11 +183,13 @@
         el.id = id;
         el.type = 'text/css';
         if (el.styleSheet) {
-          el.styleSheet.cssText = data;
+          el.styleSheet.cssText = css;
         } else {
-          el.appendChild(self.doc.createTextNode(data));
+          el.appendChild(self.doc.createTextNode(css));
         }
-        (self.doc.head || self.doc.getElementsByTagName('head')[0]).appendChild(el);
+        elx = self.doc.getElementsByTagName('link')[0];
+        elx = elx || (self.doc.head || self.doc.getElementsByTagName('head')[0]).lastChild;
+        elx.parentNode.insertBefore(el, elx);
       }
       return this;
     };
@@ -229,7 +241,7 @@
       self = this;
       el = self.doc.getElementById("gmodal");
       if (!el) {
-        self.injectStyle('gmodal-css', self.css);
+        self.injectStyle('gmodalcss', self.css);
         el = self.doc.createElement('div');
         el.id = 'gmodal';
         el.onclick = function(evt) {
@@ -271,7 +283,7 @@
 
 }).call(this);
 
-}, {"emitter":2,"domify":3}],
+}, {"emitter":2,"domify":3,"trim":4}],
 2: [function(require, module, exports) {
 
 /**
@@ -545,5 +557,25 @@ function parse(html, doc) {
 
   return fragment;
 }
+
+}, {}],
+4: [function(require, module, exports) {
+
+exports = module.exports = trim;
+
+function trim(str){
+  if (str.trim) return str.trim();
+  return str.replace(/^\s*|\s*$/g, '');
+}
+
+exports.left = function(str){
+  if (str.trimLeft) return str.trimLeft();
+  return str.replace(/^\s*/, '');
+};
+
+exports.right = function(str){
+  if (str.trimRight) return str.trimRight();
+  return str.replace(/\s*$/, '');
+};
 
 }, {}]}, {}, {"1":""})
