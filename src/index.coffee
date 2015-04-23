@@ -56,6 +56,48 @@ createModal = (self) ->
 
     return el
 
+showModalInternal = (self, opts) ->
+  # empty opts mean to show previous content
+  if (opts?)
+    self.opts = opts
+
+    # if new content, set it
+    if (self.opts.content?)
+      while self.el.firstChild
+        self.el.removeChild self.el.firstChild
+
+      if (typeof self.opts.content is 'string')
+        self.el.appendChild domify(self.opts.content)
+      else # must already be an element
+        self.el.appendChild self.opts.content
+
+      self.opts.content = null
+
+  if (self.opts.closeCls)
+    self.closeCls = self.opts.closeCls
+
+  # make sure nothing interfer to the visibility of this element
+  # then add class to display the element
+  self.elWrapper.style.display = self.elWrapper.style.visibility = ""
+  self.elWrapper.className = trim("#{self.baseCls} " + (self.opts.cls || ''))
+  eCls = self.doc.getElementsByTagName('body')[0].className
+  self.doc.getElementsByTagName('body')[0].className = trim("#{eCls} body-gmodal")
+  self.emit('show', self)
+
+  return
+
+hideModalInternal = (self) ->
+  self.elWrapper.className = "#{self.baseCls}"
+  eCls = self.doc.getElementsByTagName('body')[0].className
+  self.doc.getElementsByTagName('body')[0].className = trim(eCls.replace(/body\-gmodal/gi, ''))
+  self.isVisible = false
+  self.emit('hide', self)
+  if (typeof self.opts.hideCallback is 'function')
+    self.opts.hideCallback(self)
+
+  if (modals.length > 0)
+    self.show()
+
 ###*
 # modal
 ###
@@ -89,55 +131,33 @@ class modal
     if (modals.length > 0)
       opts = modals.shift()
 
-    # empty opts mean to show previous content
-    if (opts?)
-      self.opts = opts
-
-      # if new content, set it
-      if (self.opts.content?)
-        while self.el.firstChild
-          self.el.removeChild self.el.firstChild
-
-        if (typeof self.opts.content is 'string')
-          self.el.appendChild domify(self.opts.content)
-        else # must already be an element
-          self.el.appendChild self.opts.content
-
-        self.opts.content = null
-
     # return if previous opts is empty
-    if (!self.opts)
+    if (!self.opts and !opts)
       return false
 
-    if (self.opts.closeCls)
-      self.closeCls = self.opts.closeCls
+    if (self.opts.timeout)
+      setTimeout ->
+        showModalInternal self, opts
+      , self.opts.timeout
+    else
+      showModalInternal self, opts
 
-    # make sure nothing interfer to the visibility of this element
-    # then add class to display the element
-    self.elWrapper.style.display = self.elWrapper.style.visibility = ""
-    self.elWrapper.className = trim("#{self.baseCls} " + (self.opts.cls || ''))
-    eCls = self.doc.getElementsByTagName('body')[0].className
-    self.doc.getElementsByTagName('body')[0].className = trim("#{eCls} body-gmodal")
-    self.emit('show', self)
-
-    return self.isVisible = true
+    self.isVisible = true
 
   hide: () ->
     self = @
     if (!self.elWrapper)
       return self
-    self.elWrapper.className = "#{self.baseCls}"
-    eCls = self.doc.getElementsByTagName('body')[0].className
-    self.doc.getElementsByTagName('body')[0].className = trim(eCls.replace(/body\-gmodal/gi, ''))
-    self.isVisible = false
-    self.emit('hide', self)
-    if (typeof self.opts.hideCallback is 'function')
-      self.opts.hideCallback(self)
-
-    if (modals.length > 0)
-      self.show()
-
-    @
+    
+    if (self.opts)
+      if (self.opts.timeout)
+        setTimeout ->
+          hideModalInternal self
+        , self.opts.timeout
+      else
+        hideModalInternal self
+    
+    self
 
   # inject style
   injectStyle: (id, css) ->
