@@ -5,7 +5,7 @@
 
 PORT ?= 0
 BROWSER ?= ie:9
-TESTS = $(wildcard test/*.js)
+TESTS = $(wildcard test/*.coffee)
 SRC = $(wildcard src/*.coffee)
 MINIFY = $(BINS)/uglifyjs
 PID = test/server/pid.txt
@@ -13,11 +13,13 @@ BINS = node_modules/.bin
 BUILD = build.js
 DUO = $(BINS)/duo
 DUOT = $(BINS)/duo-test -p test/server -R spec -P $(PORT) -c "make build.js"
+COFFEE = bin/coffee --js --bare
 
 #
 # Default target.
 #
 
+default: build
 default: gmodal.js
 default: lib/index.js
 
@@ -44,7 +46,7 @@ test: $(BUILD)
 test-sauce: $(BUILD)
 	@$(DUOT) saucelabs \
 		--browsers $(BROWSER) \
-		--title lib/index.js
+		--title gmodal
 
 #
 # Test in the browser.
@@ -86,18 +88,19 @@ lib/%.js: node_modules $(SRC)
 
 node_modules: package.json
 	@npm install
+	@touch $@
 
 #
 # Target for build files.
 #
 
-$(BUILD): $(TESTS) lib/index.js
-	@$(DUO) --development test/tests.js > $(BUILD)
+$(BUILD): node_modules $(TESTS) src/index.coffee
+	@$(DUO) --development --use duo-coffee test/tests.coffee > $(BUILD)
 
 #
 # Phony build target
 #
 
-build: build.js
+build: $(BUILD)
 
 .PHONY: build
