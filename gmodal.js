@@ -159,6 +159,7 @@
 
   showModalInternal = function(self, opts) {
     var eCls;
+    self.isVisible = true;
     if ((opts != null)) {
       self.opts = opts;
       if ((self.opts.content != null)) {
@@ -181,6 +182,7 @@
     eCls = self.doc.getElementsByTagName('body')[0].className;
     self.doc.getElementsByTagName('body')[0].className = trim(eCls + " body-gmodal");
     self.emit('show', self);
+    return self;
   };
 
   hideModalInternal = function(self) {
@@ -252,7 +254,7 @@
       } else {
         showModalInternal(self, opts);
       }
-      return self.isVisible = true;
+      return this;
     };
 
     modal.prototype.hide = function() {

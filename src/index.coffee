@@ -7,7 +7,7 @@ modals = []
 checkEvent = (self, name, evt, el) ->
     evt = evt || win.event
     tg = evt.target || evt.srcElement;
-    if (tg.nodeType == 3)
+    if (tg.nodeType is 3)
         tg = tg.parentNode;
 
     if (self.hasCls(tg.parentNode, "#{self.closeCls}"))
@@ -57,12 +57,14 @@ createModal = (self) ->
     return el
 
 showModalInternal = (self, opts) ->
+  self.isVisible = true
   # empty opts mean to show previous content
   if (opts?)
     self.opts = opts
 
     # if new content, set it
     if (self.opts.content?)
+      # clear existing content
       while self.el.firstChild
         self.el.removeChild self.el.firstChild
 
@@ -73,28 +75,39 @@ showModalInternal = (self, opts) ->
 
       self.opts.content = null
 
+  # set custom close class
   if (self.opts.closeCls)
     self.closeCls = self.opts.closeCls
 
-  # make sure nothing interfer to the visibility of this element
-  # then add class to display the element
+  # make sure nothing interfere to the visibility of this element
   self.elWrapper.style.display = self.elWrapper.style.visibility = ""
+
+  # then add class to display the element
   self.elWrapper.className = trim("#{self.baseCls} " + (self.opts.cls || ''))
   eCls = self.doc.getElementsByTagName('body')[0].className
   self.doc.getElementsByTagName('body')[0].className = trim("#{eCls} body-gmodal")
-  self.emit('show', self)
 
-  return
+  # notify on show
+  self.emit('show', self)
+  return self
 
 hideModalInternal = (self) ->
+  # reset wrapper class
   self.elWrapper.className = "#{self.baseCls}"
+
+  # remove body-gmodal class from body
   eCls = self.doc.getElementsByTagName('body')[0].className
   self.doc.getElementsByTagName('body')[0].className = trim(eCls.replace(/body\-gmodal/gi, ''))
+
+  # emit modal hide
   self.isVisible = false
   self.emit('hide', self)
+  
+  # trigger custom callback
   if (typeof self.opts.hideCallback is 'function')
     self.opts.hideCallback(self)
 
+  # if there are more modals to show, show next modal
   if (modals.length > 0)
     self.show()
 
@@ -142,7 +155,7 @@ class modal
     else
       showModalInternal self, opts
 
-    self.isVisible = true
+    @
 
   hide: () ->
     self = @
@@ -183,8 +196,6 @@ class modal
       if (' ' + el.className).indexOf(' ' + v) >= 0
         return true
     return false
-
-  
 
 Emitter(modal.prototype)
 gmodal = new modal()
