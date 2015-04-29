@@ -13,7 +13,7 @@ checkEvent = (self, name, evt, el) ->
     if (self.hasCls(tg.parentNode, "#{self.closeCls}"))
       tg = tg.parentNode
 
-    scls = "gmodal-wrap #{self.closeCls}"
+    scls = "gmodal-wrap"
     if (name is 'click')
       if (self.hasCls(tg, scls) or tg is el)
         self.emit('click', tg, evt)
@@ -24,6 +24,12 @@ checkEvent = (self, name, evt, el) ->
     else if (name is 'tap')
       if (self.hasCls(tg, scls) or tg is el)
         self.emit('tap', tg, evt)
+
+    if (self.hasCls(tg, "#{self.closeCls}"))
+      myEvt = { cancel: false }
+      self.emit('close', myEvt, tg, evt)
+      if (!myEvt.cancel)
+        hideModalInternal(self)
 
     return false
 

@@ -97,7 +97,7 @@
   modals = [];
 
   checkEvent = function(self, name, evt, el) {
-    var scls, tg;
+    var myEvt, scls, tg;
     evt = evt || win.event;
     tg = evt.target || evt.srcElement;
     if (tg.nodeType === 3) {
@@ -106,7 +106,7 @@
     if (self.hasCls(tg.parentNode, "" + self.closeCls)) {
       tg = tg.parentNode;
     }
-    scls = "gmodal-wrap " + self.closeCls;
+    scls = "gmodal-wrap";
     if (name === 'click') {
       if (self.hasCls(tg, scls) || tg === el) {
         self.emit('click', tg, evt);
@@ -120,6 +120,15 @@
     } else if (name === 'tap') {
       if (self.hasCls(tg, scls) || tg === el) {
         self.emit('tap', tg, evt);
+      }
+    }
+    if (self.hasCls(tg, "" + self.closeCls)) {
+      myEvt = {
+        cancel: false
+      };
+      self.emit('close', myEvt, tg, evt);
+      if (!myEvt.cancel) {
+        hideModalInternal(self);
       }
     }
     return false;
