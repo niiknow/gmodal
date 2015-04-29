@@ -87,6 +87,13 @@ showModalInternal = (self, opts) ->
   eCls = self.doc.getElementsByTagName('body')[0].className
   self.doc.getElementsByTagName('body')[0].className = trim("#{eCls} body-gmodal")
 
+  if (self.opts.hideOn)
+    self.opts._autoHideHandler = ->
+      hideModalInternal(self)
+    for v in self.opts.hideOn.split(',')
+      if (v is 'esc' or v is 'click' or v is 'tap')
+        self.on(v, self.opts._autoHideHandler)
+
   # notify on show
   self.emit('show', self)
   return self
@@ -106,6 +113,11 @@ hideModalInternal = (self) ->
   # trigger custom callback
   if (typeof self.opts.hideCallback is 'function')
     self.opts.hideCallback(self)
+
+  if (self.opts._autoHideHandler)
+    self.off('esc', self.opts._autoHideHandler)
+    self.off('click', self.opts._autoHideHandler)
+    self.off('tap', self.opts._autoHideHandler)
 
   # if there are more modals to show, show next modal
   if (modals.length > 0)

@@ -158,7 +158,7 @@
   };
 
   showModalInternal = function(self, opts) {
-    var eCls;
+    var eCls, i, len, ref, v;
     self.isVisible = true;
     if ((opts != null)) {
       self.opts = opts;
@@ -181,6 +181,18 @@
     self.elWrapper.className = trim((self.baseCls + " ") + (self.opts.cls || ''));
     eCls = self.doc.getElementsByTagName('body')[0].className;
     self.doc.getElementsByTagName('body')[0].className = trim(eCls + " body-gmodal");
+    if (self.opts.hideOn) {
+      self.opts._autoHideHandler = function() {
+        return hideModalInternal(self);
+      };
+      ref = self.opts.hideOn.split(',');
+      for (i = 0, len = ref.length; i < len; i++) {
+        v = ref[i];
+        if (v === 'esc' || v === 'click' || v === 'tap') {
+          self.on(v, self.opts._autoHideHandler);
+        }
+      }
+    }
     self.emit('show', self);
     return self;
   };
@@ -194,6 +206,11 @@
     self.emit('hide', self);
     if (typeof self.opts.hideCallback === 'function') {
       self.opts.hideCallback(self);
+    }
+    if (self.opts._autoHideHandler) {
+      self.off('esc', self.opts._autoHideHandler);
+      self.off('click', self.opts._autoHideHandler);
+      self.off('tap', self.opts._autoHideHandler);
     }
     if (modals.length > 0) {
       return self.show();

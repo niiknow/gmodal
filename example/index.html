@@ -49,10 +49,6 @@
 
 	<script type="text/javascript" src="../gmodal.js"></script>
 	<script type="text/javascript">
-	gmodal.on('click', gmodal.hide);
-	gmodal.on('esc', gmodal.hide);
-	gmodal.on('tap', gmodal.hide);
-
 	setTimeout(function() {
 		// pushes a bunch of modal in for a wizard scenario
 		gmodal.show({content: '<div class="myModalContent">wizard step 1 <button class="gmodal-close">next</button></div>'})
@@ -62,11 +58,11 @@
 		
 	function showModal1() {
 		// you don't need no stinking jquery
-		gmodal.show({content: document.getElementById('modal1-content').innerHTML});
+		gmodal.show({content: document.getElementById('modal1-content').innerHTML, hideOn: 'click,esc,tap'}});
 	}
 	function showModal2() {
 		// you don't need no stinking jquery
-		gmodal.show({content: document.getElementById('modal2-content').innerHTML});
+		gmodal.show({content: document.getElementById('modal2-content').innerHTML, hideOn: 'click,esc,tap'}});
 	}
 	</script>
 </head>
