@@ -84,7 +84,7 @@
 })({
 1: [function(require, module, exports) {
 (function() {
-  var Emitter, checkEvent, createModal, domify, gmodal, hideModalInternal, modal, showModalInternal, trim, win;
+  var Emitter, checkEvent, createModal, domify, gmodal, hideModalInternal, modal, modals, showModalInternal, trim, win;
 
   Emitter = require('emitter');
 
@@ -95,6 +95,8 @@
   win = window;
 
   gmodal = win.gmodal;
+
+  modals = [];
 
   checkEvent = function(self, name, evt, el) {
     var myEvt, scls, tg;

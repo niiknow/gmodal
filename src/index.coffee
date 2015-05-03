@@ -4,6 +4,9 @@ trim = require('trim')
 win = window
 gmodal = win.gmodal
 
+# hold modals queue
+modals = []
+
 checkEvent = (self, name, evt, el) ->
     evt = evt || win.event
     tg = evt.target || evt.srcElement;
