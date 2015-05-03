@@ -2,7 +2,7 @@ Emitter = require('emitter')
 domify = require('domify')
 trim = require('trim')
 win = window
-modals = []
+gmodal = win.gmodal
 
 checkEvent = (self, name, evt, el) ->
     evt = evt || win.event
@@ -256,7 +256,9 @@ class modal
     return self
 
 
-Emitter(modal.prototype)
-gmodal = new modal()
-win.gmodal = gmodal
+if (!gmodal)
+  Emitter(modal.prototype)
+  gmodal = new modal()
+  win.gmodal = gmodal
+
 module.exports = gmodal

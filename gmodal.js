@@ -84,7 +84,7 @@
 })({
 1: [function(require, module, exports) {
 (function() {
-  var Emitter, checkEvent, createModal, domify, gmodal, hideModalInternal, modal, modals, showModalInternal, trim, win;
+  var Emitter, checkEvent, createModal, domify, gmodal, hideModalInternal, modal, showModalInternal, trim, win;
 
   Emitter = require('emitter');
 
@@ -94,7 +94,7 @@
 
   win = window;
 
-  modals = [];
+  gmodal = win.gmodal;
 
   checkEvent = function(self, name, evt, el) {
     var myEvt, scls, tg;
@@ -394,11 +394,11 @@
 
   })();
 
-  Emitter(modal.prototype);
-
-  gmodal = new modal();
-
-  win.gmodal = gmodal;
+  if (!gmodal) {
+    Emitter(modal.prototype);
+    gmodal = new modal();
+    win.gmodal = gmodal;
+  }
 
   module.exports = gmodal;
 
