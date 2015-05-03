@@ -2,10 +2,16 @@
   "name": "gmodal",
   "repo": "niiknow/gmodal",
   "description": "Global modal.",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "keywords": [
     "modal",
-    "web"
+    "bootstrap",
+    "javascript",
+    "pure",
+    "css",
+    "simple",
+    "overlay",
+    "jquery"
   ],
   "dependencies": {
     "component/domify": "*",

@@ -12,6 +12,18 @@
     height: 100%;
     z-index: 9999990;  /* based on safari 16777271 */ 
 }
+.gmodal .frameshim {
+    position: absolute;
+    display: block;
+    visibility: hidden;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    border: none;
+    z-index: -999;
+}
 .body-gmodal .gmodal { display: table; }
 .body-gmodal { overflow: hidden; }
 .gmodal-wrap { display: table-cell; position: relative; vertical-align: middle; }

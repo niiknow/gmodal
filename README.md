@@ -65,7 +65,10 @@ closeCb - callback method on close, this is emitter#once('hide')
 ### gmodal#hide()
  Hide the modal.  Just call show again with empty option to show previous content.
 
-### Emitter mixin
+### gmodal#iShimmy()
+ for holder IE, this allow you to shim the modal to prevent bleed through such as dropdown, flash, and other iframe
+
+### event mixin
 *gmodal* uses event *emitter* component mixin here: https://github.com/component/emitter
 
 The following are events emit from gmodal:
@@ -74,18 +77,25 @@ The following are events emit from gmodal:
 * on('esc', (evtname, evt)) - on esc key
 * on('show', (evtname)) - on show modal
 * on('hide', (evtname)) - on hide modal
+* on('close', (evtname)) - on close element click
 
 See https://github.com/component/emitter for documentation on trapping these events.
 
 Lets say you want to hide modal based on any/all interaction with the overlay, you can wire up with all the events directly to the gmodal hide function:
 
 ```
-gmodal.on('tap', gmodal.hide)
-gmodal.on('click', gmodal.hide)
-gmodal.on('esc', gmodal.hide)
+gmodal.on('tap', gmodal.hide);
+gmodal.on('click', gmodal.hide);
+gmodal.on('esc', gmodal.hide);
+
+// but the above example will execute on all modal
+// alternatively, you can use the method below to
+// only hide on particular modal content
+gmodal.show({content: 'hide on all events', hideOn: 'click,esc,tap'});
+gmodal.show({content: 'hide on esc', hideOn: 'esc'});
 ```
 
-You can also emit your own modal event and have code listen to it.
+You can also emit your own event and have code listen to it.
 
 ```
 gmodal.emit('save-click', objToSave)
@@ -98,6 +108,7 @@ gmodal.on('save-click', function(objToSave) {
 ```
 window.gmodal.elWrapper;  // the overlay element
 window.gmodal.el;         // the element that contain content
-window.gmodal.show({content: 'html here', cls: 'additional classes'});
-window.gmodal.hide();
+window.gmodal.show({ content: 'html here', 
+  cls: 'additional classes for elWrapper', 
+  hideOn: 'click, esc,tap'});
 ```

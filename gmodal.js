@@ -236,6 +236,8 @@
 
     modal.prototype.doc = win.document;
 
+    modal.prototype.ishim = null;
+
     modal.prototype.elWrapper = null;
 
     modal.prototype.el = null;
@@ -248,7 +250,15 @@
 
     modal.prototype.tpl = '<div class="gmodal-wrap gmodal-left"></div><div class="gmodal-wrap gmodal-content" id="gmodalContent"></div><div class="gmodal-wrap gmodal-right"></div>';
 
-    modal.prototype.css = '.gmodal{display:none;overflow:hidden;outline:0;-webkit-overflow-scrolling:touch;position:fixed;top:0;left:0;bottom:0;right:0;width:100%;height:100%;z-index:9999990}.body-gmodal .gmodal{display:table}.body-gmodal{overflow:hidden}.gmodal-content,.gmodal-wrap{display:table-cell;position:relative;vertical-align: middle}.gmodal-left,.gmodal-right{width:50%}';
+    modal.prototype.css = '.gmodal{display:none;overflow:hidden;outline:0;-webkit-overflow-scrolling:touch;position:fixed;top:0;left:0;bottom:0;right:0;width:100%;height:100%;z-index:9999990}.gmodal .frameshim{position:absolute;display:block;visibility:hidden;margin:0;width:100%;height:100%;top:0;left:0;border:none;z-index:-999}.body-gmodal .gmodal{display:table}.body-gmodal{overflow:hidden}.gmodal-content,.gmodal-wrap{display:table-cell;position:relative;vertical-align: middle}.gmodal-left,.gmodal-right{width:50%}';
+
+
+    /**
+     * show or open modal
+     * @param  {[Object}  opts   options
+     * @param  {Function} hideCb callback function on hide
+     * @return {Object}
+     */
 
     modal.prototype.show = function(opts, hideCb) {
       var self;
@@ -283,6 +293,12 @@
       return this;
     };
 
+
+    /**
+     * hide or close modal
+     * @return {Object}
+     */
+
     modal.prototype.hide = function() {
       var self;
       self = this;
@@ -300,6 +316,14 @@
       }
       return self;
     };
+
+
+    /**
+     * Helper method to inject your own css
+     * @param  {string} id  css id
+     * @param  {string} css the css text
+     * @return {Object}
+     */
 
     modal.prototype.injectStyle = function(id, css) {
       var el, elx, self;
@@ -321,6 +345,14 @@
       return this;
     };
 
+
+    /**
+     * helper method to determine if an element has class
+     * @param  {HTMLElement}  el  
+     * @param  {string}       cls class names
+     * @return {Boolean}
+     */
+
     modal.prototype.hasCls = function(el, cls) {
       var i, k, len, ref, v;
       ref = cls.split(' ');
@@ -331,6 +363,31 @@
         }
       }
       return false;
+    };
+
+
+    /**
+     * append an iframe shim for older IE
+     * WARNING: this is only for stupid older IE bug
+     * do not use with modern browser or site with ssl
+     * @return {Object}
+     */
+
+    modal.prototype.iShimmy = function() {
+      var self;
+      self = this;
+      if (self.elWrapper != null) {
+        if (!self.ishim) {
+          self.ishim = self.doc.createElement('iframe');
+          self.ishim.className = 'iframeshim';
+          self.ishim.scrolling = 'no';
+          self.ishim.frameborder = 0;
+          self.ishim.height = '100';
+          self.ishim.width = '100';
+          self.elWrapper.appendChild(self.ishim);
+        }
+      }
+      return self;
     };
 
     return modal;

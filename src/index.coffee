@@ -134,13 +134,21 @@ hideModalInternal = (self) ->
 ###
 class modal
   doc: win.document
+  ishim: null
   elWrapper: null
   el: null
   opts: {}
   baseCls: 'gmodal'
   closeCls: 'gmodal-close'
   tpl: '<div class="gmodal-wrap gmodal-left"></div><div class="gmodal-wrap gmodal-content" id="gmodalContent"></div><div class="gmodal-wrap gmodal-right"></div>'
-  css: '.gmodal{display:none;overflow:hidden;outline:0;-webkit-overflow-scrolling:touch;position:fixed;top:0;left:0;bottom:0;right:0;width:100%;height:100%;z-index:9999990}.body-gmodal .gmodal{display:table}.body-gmodal{overflow:hidden}.gmodal-content,.gmodal-wrap{display:table-cell;position:relative;vertical-align: middle}.gmodal-left,.gmodal-right{width:50%}'
+  css: '.gmodal{display:none;overflow:hidden;outline:0;-webkit-overflow-scrolling:touch;position:fixed;top:0;left:0;bottom:0;right:0;width:100%;height:100%;z-index:9999990}.gmodal .frameshim{position:absolute;display:block;visibility:hidden;margin:0;width:100%;height:100%;top:0;left:0;border:none;z-index:-999}.body-gmodal .gmodal{display:table}.body-gmodal{overflow:hidden}.gmodal-content,.gmodal-wrap{display:table-cell;position:relative;vertical-align: middle}.gmodal-left,.gmodal-right{width:50%}'
+  
+  ###*
+   * show or open modal
+   * @param  {[Object}  opts   options
+   * @param  {Function} hideCb callback function on hide
+   * @return {Object}        
+  ###
   show: (opts, hideCb) ->
     self = @
 
@@ -175,6 +183,10 @@ class modal
 
     @
 
+  ###*
+   * hide or close modal
+   * @return {Object}
+  ###
   hide: () ->
     self = @
     if (!self.elWrapper)
@@ -190,7 +202,12 @@ class modal
     
     self
 
-  # inject style
+  ###*
+   * Helper method to inject your own css
+   * @param  {string} id  css id
+   * @param  {string} css the css text
+   * @return {Object}     
+  ###
   injectStyle: (id, css) ->
     self = @
     el = self.doc.getElementById(id)
@@ -205,15 +222,39 @@ class modal
       elx = self.doc.getElementsByTagName('link')[0]
       elx = elx or (self.doc.head or self.doc.getElementsByTagName('head')[0]).lastChild
       elx.parentNode.insertBefore el, elx
-
     @
 
-  # determine if it has class
+  ###*
+   * helper method to determine if an element has class
+   * @param  {HTMLElement}  el  
+   * @param  {string}       cls class names
+   * @return {Boolean}    
+  ###
   hasCls: (el, cls) ->
     for v, k in cls.split(' ')
       if (' ' + el.className).indexOf(' ' + v) >= 0
         return true
     return false
+
+  ###*
+   * append an iframe shim for older IE
+   * WARNING: this is only for stupid older IE bug
+   * do not use with modern browser or site with ssl
+   * @return {Object}
+  ###
+  iShimmy: () ->
+    self = @
+    if self.elWrapper? 
+      if !self.ishim
+        self.ishim = self.doc.createElement('iframe');
+        self.ishim.className = 'iframeshim'
+        self.ishim.scrolling = 'no'
+        self.ishim.frameborder = 0
+        self.ishim.height = '100'
+        self.ishim.width = '100'
+        self.elWrapper.appendChild self.ishim
+    return self
+
 
 Emitter(modal.prototype)
 gmodal = new modal()
