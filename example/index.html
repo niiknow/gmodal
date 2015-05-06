@@ -19,17 +19,14 @@
 	}
 
 	.gmodal {
-		filter: alpha(opacity=75); /* IE8 */
-		background: #000; /* IE8 */
-		background: rgba(0,0,0,0.75);
+        /* cross-browser IE8 and up compatible data URI RGBA(0,0,0,0.7) */
+        background: url("data:image/gif;base64, iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNg2AQAALUAs0e+XlcAAAAASUVORK5CYII=");
 	}
 
 	.myModalContent {
-		filter: alpha(opacity=1); /* IE8 */
-		background: #fff; /* IE8 */
+		background: #fff;
 		width: 500px;
 		padding: 10px;
-		position: relative;
 	}
 
     .myCloseButton {

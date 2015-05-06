@@ -34,11 +34,21 @@ body
 *gmodal* itself, is an overlay.  You should provide your own overlay opacity.  Since the overlay is the actual modal, we do not recommend using opacity value.  Instead, we use a transparent pixel data URI, which you can generate using:  http://px64.net
 
 ```
-.gmodal {
-    /* cross-browser IE8 and up compatible data URI RGBA(0,0,0,0.7) */
-    background: url("data:image/gif;base64, iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNg2AQAALUAs0e+XlcAAAAASUVORK5CYII=");
-}
+    .gmodal {
+        /* cross-browser IE8 and up compatible data URI RGBA(0,0,0,0.7) */
+        background: url("data:image/gif;base64, iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNg2AQAALUAs0e+XlcAAAAASUVORK5CYII=");
+    }
+
+    .myModalContent {
+        background: #fff;
+        width: 500px;
+        padding: 10px;
+    }
 ```
+
+And since you provide an opacity, you must undo the opacity on your content 
+as seen in .yourModalContent example.  This is any class you give to
+the wrapper of your modal content.  
 
 You have full control over your modal content and CSS; therefore, you can provide your own CSS to support responsive UI.  Don't like to write your own css?  gmodal was designed with framework like Twitter-Bootstrap in mind.
 
