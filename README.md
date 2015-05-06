@@ -42,7 +42,7 @@ body
 
 You have full control over your modal content and CSS; therefore, you can provide your own CSS to support responsive UI.  Don't like to write your own css?  gmodal was designed with framework like Twitter-Bootstrap in mind.
 
-We also have example of bootstrap modal css (no need to include bootstrap js, only css is sufficient): https://niiknow.gsn.io/gmodal/example/
+We also have example of bootstrap modal css (no need to include bootstrap js, only css is sufficient): https://niiknow.github.io/gmodal/example/
 
 ## API
 
