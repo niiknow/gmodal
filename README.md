@@ -1,6 +1,5 @@
 # gmodal
-There can be only one.  This project aim to create a cross-browser modal with overlay. 
-To keep things simple, we are defining that a modal is a singleton object; and therefore, a global object.
+This project aim to create a cross-browser modal with overlay.  To keep things simple, we are defining that a modal is a singleton object; and therefore, a global object.
 
 The initial requirement for this project.
 
@@ -10,6 +9,7 @@ The initial requirement for this project.
 4. People can bring their own css.
 5. No bloated framework dependencies such as jQuery.
 6. If a modal is visible, you must call hide before calling show.
+7. cross-browser support including support of IE8.
 
 ## template
 In order to attain cross-browser compatibility, gmodal template uses a grid system.  The template is:
@@ -25,34 +25,24 @@ body
 * *gmodal-content* middle collumn - content container - default vertical-align middle
 * *gmodal-right* right column - allow for right padding - default 50%
 * *gmodal-close* class can be use to tag element for close on click.  You can also use the gmodal.close method directly.
-* *body-gmodal* - apply to body whenever the gmodal is visible - default overflow hidden
+* *body-gmodal* - apply to body whenever the gmodal is visible - default overflow hidden.
+
 ```
 <button class="gmodal-close">x</button>
 ```
 
-*gmodal* itself, is an overlay.  You should provide your own overlay opacity:
+*gmodal* itself, is an overlay.  You should provide your own overlay opacity.  Since the overlay is the actual modal, we do not recommend using opacity value.  Instead, we use a transparent pixel data URI, which you can generate using:  http://px64.net
+
 ```
 .gmodal {
-    filter: alpha(opacity=75); /* IE8 */
-    background: #000; /* IE8 */
-}
-
-.yourModalContentClass {
-    filter: alpha(opacity=1); /* IE8 */
-    background: #fff; /* IE8 */
+    /* cross-browser IE8 and up compatible data URI RGBA(0,0,0,0.7) */
+    background: url("data:image/gif;base64, iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNg2AQAALUAs0e+XlcAAAAASUVORK5CYII=");
 }
 ```
-And since you provide an opacity, you must undo the opacity on your content 
-as seen in .yourModalContentClass example.  This is any class you give to
-the wrapper of your modal content.  
 
-As you can see, you have full control over your modal content and CSS.  Therefore, you can provide your own CSS to support responsive UI.  When providing your own css, remember to take into account for the gmodal classes such as: gmodal-left,
-and gmodal-right.  
+You have full control over your modal content and CSS; therefore, you can provide your own CSS to support responsive UI.  Don't like to write your own css?  gmodal was designed with framework like Twitter-Bootstrap in mind.
 
-With the flexbility, you can have modal content as any valid html content including iframe and spinner gif. 
-
-Don't like to write your own css?  gmodal was designed with framework like bootstrap in mind.  
-We also provide examples of gmodal integration with bootstrap modal css.  You do not need to have bootstrap modal javascript.
+We also have example of bootstrap modal css (no need to include bootstrap js, only css is sufficient): https://niiknow.gsn.io/gmodal/example/
 
 ## API
 
