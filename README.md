@@ -66,7 +66,22 @@ closeCb - callback method on close, this is emitter#once('hide')
  Hide the modal.  Just call show again with empty option to show previous content.
 
 ### gmodal#iShimmy()
- for holder IE, this allow you to shim the modal to prevent bleed through such as dropdown, flash, and other iframe
+ for older IE (5-7), this allow you to shim the modal to prevent bleed through such as dropdown, flash, and other iframe.
+
+Additionally, you cannot use data URI so you will have to use opacity filter.  You may want to keep these css separate with conditional include such as:
+```
+<!--[if lt IE 8]>
+<style>
+    .gmodal {
+      background: #000; /* black - IE 5-7 */
+      filter: alpha(opacity=75); /* IE 5-7 */
+    }
+    .myModalContent {
+      background: #fff; /* white - IE 5-7 */
+    }
+</style>
+<![endif]-->
+```
 
 ### event mixin
 *gmodal* uses event *emitter* component mixin here: https://github.com/component/emitter
