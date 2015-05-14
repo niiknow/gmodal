@@ -360,7 +360,7 @@
       ref = cls.split(' ');
       for (k = i = 0, len = ref.length; i < len; k = ++i) {
         v = ref[k];
-        if ((' ' + el.className).indexOf(' ' + v) >= 0) {
+        if ((' ' + el.className + ' ').indexOf(' ' + v + ' ') >= 0) {
           return true;
         }
       }
