@@ -21,7 +21,7 @@ checkEvent = (self, name, evt, el) ->
       if (self.hasCls(tg, scls) or tg is el)
         self.emit('click', tg, evt)
     else if (name is 'keypress')
-      if (self.hasCls(tg, scls) or tg is el or tg is sel.doc or tg is self.doc.body)
+      if (self.hasCls(tg, scls) or tg is el or tg is self.doc or tg is self.doc.body)
         if ((evt.which || evt.keyCode) is 27)
           self.emit('esc', tg, evt)
     else if (name is 'tap')

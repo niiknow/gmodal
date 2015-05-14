@@ -114,7 +114,7 @@
         self.emit('click', tg, evt);
       }
     } else if (name === 'keypress') {
-      if (self.hasCls(tg, scls) || tg === el || tg === sel.doc || tg === self.doc.body) {
+      if (self.hasCls(tg, scls) || tg === el || tg === self.doc || tg === self.doc.body) {
         if ((evt.which || evt.keyCode) === 27) {
           self.emit('esc', tg, evt);
         }
