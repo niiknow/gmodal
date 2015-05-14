@@ -133,7 +133,7 @@
         hideModalInternal(self);
       }
     }
-    return false;
+    return true;
   };
 
   createModal = function(self) {
