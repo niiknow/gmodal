@@ -34,7 +34,8 @@ checkEvent = (self, name, evt, el) ->
       if (!myEvt.cancel)
         hideModalInternal(self)
 
-    return false
+    # just intercept event, not handle so allow propagation
+    return true
 
 createModal = (self) ->
     el = self.doc.getElementById("gmodal")
