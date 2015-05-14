@@ -236,7 +236,7 @@ class modal
   ###
   hasCls: (el, cls) ->
     for v, k in cls.split(' ')
-      if (' ' + el.className).indexOf(' ' + v) >= 0
+      if (' ' + el.className + ' ').indexOf(' ' + v + ' ') >= 0
         return true
     return false
 
