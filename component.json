@@ -1,8 +1,8 @@
 {
   "name": "gmodal",
   "repo": "niiknow/gmodal",
-  "description": "Global modal.",
-  "version": "0.1.10",
+  "description": "Global modal",
+  "version": "0.1.11",
   "keywords": [
     "modal",
     "bootstrap",

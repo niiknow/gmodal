@@ -15,8 +15,9 @@ The initial requirement for this project.
 In order to attain cross-browser compatibility, gmodal template uses a grid system.  The template is:
 ```
 body
-  gmodal
-    gmodal-left gmodal-content gmodal-right
+  .gmodal
+    .gmodal-container
+      .gmodal-left .gmodal-content .gmodal-right
 ```
   
 ## css classes

@@ -1,9 +1,9 @@
 {
   "name": "gmodal",
   "author": "tom nguyen <tom@noogen.net>",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "license": "MIT",
-  "description": "Global modal.",
+  "description": "Global modal",
   "keywords": [
     "modal",
     "bootstrap",
