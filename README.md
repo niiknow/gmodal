@@ -21,18 +21,19 @@ body
 ```
   
 ## css classes
-* *gmodal* - the primary overlay/wrapper
-* *gmodal-left* left collumn - allow for left padding - default 50%
-* *gmodal-content* middle collumn - content container - default vertical-align middle
-* *gmodal-right* right column - allow for right padding - default 50%
-* *gmodal-close* class can be use to tag element for close on click.  You can also use the gmodal.close method directly.
-* *body-gmodal* - apply to body whenever the gmodal is visible - default overflow hidden.
+* *.gmodal* - the primary overlay/wrapper
+* *.gmodal-container* - make sure table display does not interfere with outside tables.
+* *.gmodal-left* left collumn - allow for left padding - default 50%
+* *.gmodal-content* middle collumn - content container - default vertical-align middle
+* *.gmodal-right* right column - allow for right padding - default 50%
+* *.gmodal-close* class can be use to tag element for close on click.  You can also use the gmodal.close method directly.
+* *.body-gmodal* - apply to body whenever the gmodal is visible - default overflow hidden.
 
 ```
 <button class="gmodal-close">x</button>
 ```
 
-*gmodal* itself, is an overlay.  You should provide your own overlay opacity.  Since the overlay is the actual modal, we do not recommend using opacity value.  Instead, we use a transparent pixel data URI, which you can generate using:  http://px64.net
+*.gmodal* itself, is an overlay.  You should provide your own overlay opacity.  Since the overlay is the actual modal, we do not recommend using opacity value.  Instead, we use a transparent pixel data URI, which you can generate using:  http://px64.net
 
 ```
     .gmodal {
