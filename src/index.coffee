@@ -89,13 +89,19 @@ showModalInternal = (self, opts) ->
   if (self.opts.closeCls)
     self.closeCls = self.opts.closeCls
 
+  # scroll to top before opening modal
+  win.scrollTo 0, 0
   # make sure nothing interfere to the visibility of this element
   self.elWrapper.style.display = self.elWrapper.style.visibility = ""
-
   # then add class to display the element
   self.elWrapper.className = trim("#{self.baseCls} " + (self.opts.cls || ''))
-  eCls = self.doc.getElementsByTagName('body')[0].className
-  self.doc.getElementsByTagName('body')[0].className = trim("#{eCls} body-gmodal")
+
+  setTimeout ->
+    body = self.doc.getElementsByTagName('body')[0]
+    eCls = body.className
+    body.className = trim("#{eCls} body-gmodal")
+    return
+  , 50
 
   if (self.opts.hideOn)
     self.opts._autoHideHandler = ->
@@ -181,6 +187,7 @@ class modal
     if ((self.opts or opts).timeout)
       setTimeout ->
         showModalInternal self, opts
+        return
       , (self.opts or opts).timeout
     else
       showModalInternal self, opts
@@ -200,6 +207,7 @@ class modal
       if (self.opts.timeout)
         setTimeout ->
           hideModalInternal self
+          return
         , self.opts.timeout
       else
         hideModalInternal self

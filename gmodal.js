@@ -169,7 +169,7 @@
   };
 
   showModalInternal = function(self, opts) {
-    var eCls, i, len, ref, v;
+    var i, len, ref, v;
     self.isVisible = true;
     if ((opts != null)) {
       self.opts = opts;
@@ -188,10 +188,15 @@
     if (self.opts.closeCls) {
       self.closeCls = self.opts.closeCls;
     }
+    win.scrollTo(0, 0);
     self.elWrapper.style.display = self.elWrapper.style.visibility = "";
     self.elWrapper.className = trim((self.baseCls + " ") + (self.opts.cls || ''));
-    eCls = self.doc.getElementsByTagName('body')[0].className;
-    self.doc.getElementsByTagName('body')[0].className = trim(eCls + " body-gmodal");
+    setTimeout(function() {
+      var body, eCls;
+      body = self.doc.getElementsByTagName('body')[0];
+      eCls = body.className;
+      body.className = trim(eCls + " body-gmodal");
+    }, 50);
     if (self.opts.hideOn) {
       self.opts._autoHideHandler = function() {
         return hideModalInternal(self);
@@ -287,7 +292,7 @@
       }
       if ((self.opts || opts).timeout) {
         setTimeout(function() {
-          return showModalInternal(self, opts);
+          showModalInternal(self, opts);
         }, (self.opts || opts).timeout);
       } else {
         showModalInternal(self, opts);
@@ -310,7 +315,7 @@
       if (self.opts) {
         if (self.opts.timeout) {
           setTimeout(function() {
-            return hideModalInternal(self);
+            hideModalInternal(self);
           }, self.opts.timeout);
         } else {
           hideModalInternal(self);
