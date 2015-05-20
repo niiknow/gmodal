@@ -7,26 +7,24 @@
     position: absolute; /*ie6 and above*/
     top: 0;
     left: 0;
-    bottom: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
+    width: 200%;
+    height: 200%;
     z-index: 9999990;  /* based on safari 16777271 */ 
 }
 .gmodal .frameshim {
     position: absolute;
     display: block;
     visibility: hidden;
-    margin: 0;
     width: 100%;
     height: 100%;
+    margin: 0;
     top: 0;
     left: 0;
     border: none;
     z-index: -999;
 }
-.body-gmodal .gmodal { display: block; }
-.body-gmodal { overflow: hidden; }
-.gmodal-container { display: table; position: relative; z-index: 1; width: 100%; height: 100%; }
-.gmodal-wrap { display: table-cell; position: relative; vertical-align: middle; }
-.gmodal-left, .gmodal-right { width: 50%; }
+.html-gmodal body .gmodal { display: block; }
+.html-gmodal, .html-modal body { overflow: hidden; margin:0; padding:0; height:100%; width:100%; }
+.gmodal-container { display: table; position: relative; z-index: 1; width: 50%; height: 50%; }
+.gmodal-wrap { display: table-cell; position: relative; vertical-align: middle; z-index: 1 }
+.gmodal-left, .gmodal-right { width: 50%; z-index: 1 }
