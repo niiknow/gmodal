@@ -7,7 +7,7 @@
     position: absolute; /*ie6 and above*/
     top: 0;
     left: 0;
-    width: 200%;
+    width: 100%;
     height: 200%;
     z-index: 9999990;  /* based on safari 16777271 */ 
 }
@@ -25,6 +25,6 @@
 }
 .html-gmodal body .gmodal { display: block; }
 .html-gmodal, .html-modal body { overflow: hidden; margin:0; padding:0; height:100%; width:100%; }
-.gmodal-container { display: table; position: relative; z-index: 1; width: 50%; height: 50%; }
+.gmodal-container { display: table; position: relative; z-index: 1; width: 100%; height: 50%; }
 .gmodal-wrap { display: table-cell; position: relative; vertical-align: middle; z-index: 1 }
 .gmodal-left, .gmodal-right { width: 50%; z-index: 1 }
