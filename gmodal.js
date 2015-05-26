@@ -169,7 +169,7 @@
   };
 
   showModalInternal = function(self, opts) {
-    var i, len, ref, v;
+    var body, eCls, i, len, ref, v;
     self.isVisible = true;
     if ((opts != null)) {
       self.opts = opts;
@@ -191,12 +191,9 @@
     win.scrollTo(0, 0);
     self.elWrapper.style.display = self.elWrapper.style.visibility = "";
     self.elWrapper.className = trim((self.baseCls + " ") + (self.opts.cls || ''));
-    setTimeout(function() {
-      var body, eCls;
-      body = self.doc.getElementsByTagName('html')[0];
-      eCls = body.className;
-      body.className = trim(eCls + " html-gmodal");
-    }, 50);
+    body = self.doc.getElementsByTagName('html')[0];
+    eCls = body.className;
+    body.className = trim(eCls + " html-gmodal");
     if (self.opts.hideOn) {
       self.opts._autoHideHandler = function() {
         return hideModalInternal(self);

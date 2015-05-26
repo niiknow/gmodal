@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>gmodal demo</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- For demo purpose -->
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<style type="text/css">
+		html, body {
+		    margin: 0;
+		    padding: 10px;
+		}
+
+		.gmodal {
+	        /* cross-browser IE8 and up compatible data URI RGBA(0,0,0,0.7) */
+	        background: url("data:image/gif;base64, iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNg2AQAALUAs0e+XlcAAAAASUVORK5CYII=");
+		}
+
+		.sw {
+			background: #fff;
+		}
+
+		.sw-title {
+			text-align: center;
+			background: #ccc;
+			color: white;
+		}
+
+		.sw-content {
+			width: 580px;
+			background: #fff;
+			height: 170px;
+			text-align: center;
+			padding: 5px;
+		}
+
+		/* logo responsive */
+		@media(max-width: 767px){
+		  .sw-content {
+		  	width: 200px;
+		  	height: 330px;
+		  }
+		}
+
+		@media(min-width:768px) and (max-width:991px) {
+		  .sw-content {
+		  	width: 390px;
+		  }
+		}
+
+		.sw-close {
+			float: right;
+			margin-right: 5px;
+			cursor: pointer;
+		}
+
+		.gsnsw {
+			float: left;
+			margin: 5px;
+		}
+	</style>
+	<!-- /For demo purpose -->
+
+	<script type="text/javascript" src="../gmodal.js"></script>
+	<script type="text/javascript">
+		function showModal1() {
+			// you don't need no stinking jquery
+			gmodal.show({content: document.getElementById('modal1-content').innerHTML, hideOn: 'click,esc,tap'});
+		}
+	</script>
+</head>
+<body>
+	<h1>gmodal.js</h1>
+	<div>Works with your own css or framework like Twitter Bootstrap.  Just bring your css.  No bootstrap.js or jQuery required!</div><br />
+ data-targeting="{kw: 'sw'}"
+
+	<button onclick="showModal1()">open fixed-width modal</button>
+
+	<script type="text/html" id="modal1-content">
+	    <div class="sw">
+			<div class="sw-header">
+				<div class="gmodal-close sw-close">&times;</div>
+			    <div class="sw-title">This is your title!</div>
+			</div>
+			<div class="sw-content">
+                <div class="gsnsw" data-dimensions="180x150"><img class="remove" src="http://placehold.it/180x150"></div>
+                <div class="gsnsw" data-dimensions="180x150"><img class="remove" src="http://placehold.it/180x150"></div>
+                <div class="gsnsw hidden-sm hidden-xs" data-dimensions="180x150"><img class="remove" src="http://placehold.it/180x150"></div>
+			</div>
+		</div>
+	</script>
+	</body>
+</html>

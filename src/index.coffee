@@ -96,12 +96,10 @@ showModalInternal = (self, opts) ->
   # then add class to display the element
   self.elWrapper.className = trim("#{self.baseCls} " + (self.opts.cls || ''))
 
-  setTimeout ->
-    body = self.doc.getElementsByTagName('html')[0]
-    eCls = body.className
-    body.className = trim("#{eCls} html-gmodal")
-    return
-  , 50
+  # add to html element
+  body = self.doc.getElementsByTagName('html')[0]
+  eCls = body.className
+  body.className = trim("#{eCls} html-gmodal")
 
   if (self.opts.hideOn)
     self.opts._autoHideHandler = ->
