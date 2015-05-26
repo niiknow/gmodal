@@ -25,6 +25,6 @@
 }
 .html-gmodal body .gmodal { display: block; }
 .html-gmodal, .html-modal body { overflow: hidden; margin:0; padding:0; height:100%; width:100%; }
-.gmodal-container { display: table; position: relative; z-index: 1; width: 100%; height: 50%; }
-.gmodal-wrap { display: table-cell; position: relative; vertical-align: middle; z-index: 1 }
-.gmodal-left, .gmodal-right { width: 50%; z-index: 1 }
+.gmodal-container { display: table; position: relative; width: 100%; height: 50%; }
+.gmodal-wrap { display: table-cell; position: relative; vertical-align: middle; }
+.gmodal-left, .gmodal-right { width: 50%; }
