@@ -185,15 +185,17 @@
         self.opts.content = null;
       }
     }
-    if (self.opts.closeCls) {
-      self.closeCls = self.opts.closeCls;
-    }
+    self.closeCls = self.opts.closeCls || self.closeCls;
     win.scrollTo(0, 0);
     self.elWrapper.style.display = self.elWrapper.style.visibility = "";
     self.elWrapper.className = trim((self.baseCls + " ") + (self.opts.cls || ''));
     body = self.doc.getElementsByTagName('html')[0];
     eCls = body.className;
     body.className = trim(eCls + " html-gmodal");
+    setTimeout(function() {
+      self.emit('show-timeout', self);
+      self.el.className = trim((" " + self.el.className + " ").replace(' in ', '') + ' in');
+    }, self.opts.timeout || 50);
     if (self.opts.hideOn) {
       self.opts._autoHideHandler = function() {
         return hideModalInternal(self);
@@ -211,23 +213,27 @@
   };
 
   hideModalInternal = function(self) {
-    var eCls;
     self.elWrapper.className = "" + self.baseCls;
-    eCls = self.doc.getElementsByTagName('html')[0].className;
-    self.doc.getElementsByTagName('html')[0].className = trim(eCls.replace(/html\-gmodal/gi, ''));
-    self.isVisible = false;
-    self.emit('hide', self);
-    if (typeof self.opts.hideCallback === 'function') {
-      self.opts.hideCallback(self);
-    }
-    if (self.opts._autoHideHandler) {
-      self.off('esc', self.opts._autoHideHandler);
-      self.off('click', self.opts._autoHideHandler);
-      self.off('tap', self.opts._autoHideHandler);
-    }
-    if (modals.length > 0) {
-      return self.show();
-    }
+    self.el.className = 'gmodal-wrap gmodal-content';
+    setTimeout(function() {
+      var eCls;
+      eCls = self.doc.getElementsByTagName('html')[0].className;
+      self.doc.getElementsByTagName('html')[0].className = trim(eCls.replace(/html\-gmodal/gi, ''));
+      self.isVisible = false;
+      self.emit('hide', self);
+      if (typeof self.opts.hideCallback === 'function') {
+        self.opts.hideCallback(self);
+      }
+      if (self.opts._autoHideHandler) {
+        self.off('esc', self.opts._autoHideHandler);
+        self.off('click', self.opts._autoHideHandler);
+        self.off('tap', self.opts._autoHideHandler);
+      }
+      if (modals.length !== 0) {
+        return self.show();
+      }
+    }, self.opts.timeout || 50);
+    return self;
   };
 
 
@@ -265,9 +271,9 @@
      */
 
     modal.prototype.show = function(opts, hideCb) {
-      var self;
+      var ref, self;
       self = this;
-      if (!self.doc || !self.doc.body) {
+      if (!((ref = self.doc) != null ? ref.body : void 0)) {
         return false;
       }
       self.elWrapper = createModal(self);
@@ -278,23 +284,17 @@
         opts.hideCallback = hideCb;
         modals.push(opts);
       }
-      if (self.isVisible) {
+      if (!!self.isVisible) {
         return false;
       }
       if (modals.length > 0) {
         opts = modals.shift();
       }
-      if (!self.opts && !opts) {
+      if (!opts) {
         return false;
       }
-      if ((self.opts || opts).timeout) {
-        setTimeout(function() {
-          showModalInternal(self, opts);
-        }, (self.opts || opts).timeout);
-      } else {
-        showModalInternal(self, opts);
-      }
-      return this;
+      showModalInternal(self, opts);
+      return self;
     };
 
 
@@ -309,14 +309,8 @@
       if (!self.elWrapper) {
         return self;
       }
-      if (self.opts) {
-        if (self.opts.timeout) {
-          setTimeout(function() {
-            hideModalInternal(self);
-          }, self.opts.timeout);
-        } else {
-          hideModalInternal(self);
-        }
+      if (!!self.opts) {
+        hideModalInternal(self);
       }
       return self;
     };
@@ -346,7 +340,7 @@
         elx = elx || (self.doc.head || self.doc.getElementsByTagName('head')[0]).lastChild;
         elx.parentNode.insertBefore(el, elx);
       }
-      return this;
+      return self;
     };
 
 
@@ -380,16 +374,14 @@
     modal.prototype.iShimmy = function() {
       var self;
       self = this;
-      if (self.elWrapper != null) {
-        if (!self.ishim) {
-          self.ishim = self.doc.createElement('iframe');
-          self.ishim.className = 'iframeshim';
-          self.ishim.scrolling = 'no';
-          self.ishim.frameborder = 0;
-          self.ishim.height = '100';
-          self.ishim.width = '100';
-          self.elWrapper.appendChild(self.ishim);
-        }
+      if ((self.elWrapper != null) && !self.shim) {
+        self.ishim = self.doc.createElement('iframe');
+        self.ishim.className = 'iframeshim';
+        self.ishim.scrolling = 'no';
+        self.ishim.frameborder = 0;
+        self.ishim.height = '100';
+        self.ishim.width = '100';
+        self.elWrapper.appendChild(self.ishim);
       }
       return self;
     };

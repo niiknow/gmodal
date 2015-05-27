@@ -24,6 +24,7 @@
 		}
 	
 		.myModalContent {
+			position: relative;
 			background: #fff;
 			width: 500px;
 			padding: 10px;
@@ -39,6 +40,16 @@
 		.modal-body {
 		    max-height: 200px;
 		    overflow-y: auto;
+		}
+
+		.gmodal-content {
+			opacity: 0;
+		    -webkit-transition: opacity 1s linear;
+		    transition: opacity 1s linear;
+		}
+
+		.gmodal-content.in {
+			opacity: 1;
 		}
 
 	</style>
@@ -87,13 +98,6 @@
 			<button class="myCloseButton gmodal-close" title="Close">&times;</button>
 		</div>
 	</script>
-
-
-
-
-
-
-
 
 
 	<button onclick="showModal2()">open Bootstrap responsive modal</button>

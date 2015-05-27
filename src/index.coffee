@@ -8,8 +8,8 @@ gmodal = win.gmodal
 modals = []
 
 checkEvent = (self, name, evt, el) ->
-    evt = evt || win.event
-    tg = evt.target || evt.srcElement;
+    evt = evt or win.event
+    tg = evt.target or evt.srcElement;
     if (tg.nodeType is 3)
         tg = tg.parentNode;
 
@@ -22,7 +22,7 @@ checkEvent = (self, name, evt, el) ->
         self.emit('click', tg, evt)
     else if (name is 'keypress')
       if (self.hasCls(tg, scls) or tg is el or tg is self.doc or tg is self.doc.body)
-        if ((evt.which || evt.keyCode) is 27)
+        if ((evt.which or evt.keyCode) is 27)
           self.emit('esc', tg, evt)
     else if (name is 'tap')
       if (self.hasCls(tg, scls) or tg is el)
@@ -31,8 +31,7 @@ checkEvent = (self, name, evt, el) ->
     if (self.hasCls(tg, "#{self.closeCls}"))
       myEvt = { cancel: false }
       self.emit('close', myEvt, tg, evt)
-      if (!myEvt.cancel)
-        hideModalInternal(self)
+      hideModalInternal(self) unless myEvt.cancel
 
     # just intercept event, not handle so allow propagation
     return true
@@ -86,24 +85,32 @@ showModalInternal = (self, opts) ->
       self.opts.content = null
 
   # set custom close class
-  if (self.opts.closeCls)
-    self.closeCls = self.opts.closeCls
+  self.closeCls = self.opts.closeCls or self.closeCls
 
   # scroll to top before opening modal
   win.scrollTo 0, 0
+
   # make sure nothing interfere to the visibility of this element
   self.elWrapper.style.display = self.elWrapper.style.visibility = ""
+
   # then add class to display the element
-  self.elWrapper.className = trim("#{self.baseCls} " + (self.opts.cls || ''))
+  self.elWrapper.className = trim("#{self.baseCls} " + (self.opts.cls or ''))
 
   # add to html element
   body = self.doc.getElementsByTagName('html')[0]
   eCls = body.className
   body.className = trim("#{eCls} html-gmodal")
 
+  setTimeout ->
+    self.emit('show-timeout', self)
+    self.el.className = trim(" #{self.el.className} ".replace(' in ', '') + ' in')
+    return
+  , self.opts.timeout or 50
+
   if (self.opts.hideOn)
     self.opts._autoHideHandler = ->
       hideModalInternal(self)
+
     for v in self.opts.hideOn.split(',')
       if (v is 'esc' or v is 'click' or v is 'tap')
         self.on(v, self.opts._autoHideHandler)
@@ -115,27 +122,32 @@ showModalInternal = (self, opts) ->
 hideModalInternal = (self) ->
   # reset wrapper class
   self.elWrapper.className = "#{self.baseCls}"
+  self.el.className = 'gmodal-wrap gmodal-content'
 
-  # remove body-gmodal class from body
-  eCls = self.doc.getElementsByTagName('html')[0].className
-  self.doc.getElementsByTagName('html')[0].className = trim(eCls.replace(/html\-gmodal/gi, ''))
+  setTimeout ->
+    # remove body-gmodal class from body
+    eCls = self.doc.getElementsByTagName('html')[0].className
+    self.doc.getElementsByTagName('html')[0].className = trim(eCls.replace(/html\-gmodal/gi, ''))
 
-  # emit modal hide
-  self.isVisible = false
-  self.emit('hide', self)
-  
-  # trigger custom callback
-  if (typeof self.opts.hideCallback is 'function')
-    self.opts.hideCallback(self)
+    # emit modal hide
+    self.isVisible = false
+    self.emit('hide', self)
+    
+    # trigger custom callback
+    if (typeof self.opts.hideCallback is 'function')
+      self.opts.hideCallback(self)
 
-  if (self.opts._autoHideHandler)
-    self.off('esc', self.opts._autoHideHandler)
-    self.off('click', self.opts._autoHideHandler)
-    self.off('tap', self.opts._autoHideHandler)
+    if (self.opts._autoHideHandler)
+      self.off('esc', self.opts._autoHideHandler)
+      self.off('click', self.opts._autoHideHandler)
+      self.off('tap', self.opts._autoHideHandler)
 
-  # if there are more modals to show, show next modal
-  if (modals.length > 0)
-    self.show()
+    # if there are more modals to show, show next modal
+    self.show() unless modals.length is 0
+
+  , self.opts.timeout or 50
+
+  return self
 
 ###*
 # modal
@@ -161,8 +173,7 @@ class modal
     self = @
 
     # must have document and body
-    if (!self.doc or !self.doc.body)
-      return false
+    return false unless self.doc?.body
 
     self.elWrapper = createModal(self)
     if (!self.el)
@@ -172,25 +183,17 @@ class modal
       opts.hideCallback = hideCb
       modals.push(opts)
  
-    if (self.isVisible)
-      return false
+    return false unless !self.isVisible
 
     if (modals.length > 0)
       opts = modals.shift()
 
     # return if previous opts is empty
-    if (!self.opts and !opts)
-      return false
+    return false unless opts
 
-    if ((self.opts or opts).timeout)
-      setTimeout ->
-        showModalInternal self, opts
-        return
-      , (self.opts or opts).timeout
-    else
-      showModalInternal self, opts
+    showModalInternal self, opts
 
-    @
+    return self
 
   ###*
    * hide or close modal
@@ -198,19 +201,9 @@ class modal
   ###
   hide: () ->
     self = @
-    if (!self.elWrapper)
-      return self
-    
-    if (self.opts)
-      if (self.opts.timeout)
-        setTimeout ->
-          hideModalInternal self
-          return
-        , self.opts.timeout
-      else
-        hideModalInternal self
-    
-    self
+    return self unless self.elWrapper
+    hideModalInternal(self) unless !self.opts
+    return self
 
   ###*
    * Helper method to inject your own css
@@ -232,7 +225,7 @@ class modal
       elx = self.doc.getElementsByTagName('link')[0]
       elx = elx or (self.doc.head or self.doc.getElementsByTagName('head')[0]).lastChild
       elx.parentNode.insertBefore el, elx
-    @
+    return self
 
   ###*
    * helper method to determine if an element has class
@@ -254,17 +247,15 @@ class modal
   ###
   iShimmy: () ->
     self = @
-    if self.elWrapper? 
-      if !self.ishim
-        self.ishim = self.doc.createElement('iframe');
-        self.ishim.className = 'iframeshim'
-        self.ishim.scrolling = 'no'
-        self.ishim.frameborder = 0
-        self.ishim.height = '100'
-        self.ishim.width = '100'
-        self.elWrapper.appendChild self.ishim
+    if self.elWrapper? and !self.shim
+      self.ishim = self.doc.createElement('iframe');
+      self.ishim.className = 'iframeshim'
+      self.ishim.scrolling = 'no'
+      self.ishim.frameborder = 0
+      self.ishim.height = '100'
+      self.ishim.width = '100'
+      self.elWrapper.appendChild self.ishim
     return self
-
 
 if (!gmodal)
   Emitter(modal.prototype)
