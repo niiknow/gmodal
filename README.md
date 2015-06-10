@@ -1,5 +1,5 @@
 # gmodal
-This project aim to create a cross-browser modal with overlay.  To keep things simple, we are defining that a modal is a singleton object; and therefore, a global object.
+This project aim to create a cross-browser responsive modal with overlay.  To keep things simple, we are defining that a modal is a singleton object; and therefore, a global object.
 
 The initial requirement for this project.
 
@@ -129,3 +129,8 @@ window.gmodal.show({ content: 'html here',
   cls: 'additional classes for elWrapper', 
   hideOn: 'click, esc,tap'});
 ```
+
+## Q&A
+
+### gmodal on a non-responsive site?
+You must define the  width for your non-responsive site in viewport meta.  Let say your content width is 1024, then you must define in document head:  <meta name="viewport" content="width=1024">
