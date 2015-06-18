@@ -88,7 +88,8 @@ showModalInternal = (self, opts) ->
   self.closeCls = self.opts.closeCls or self.closeCls
 
   # scroll to top before opening modal
-  # win.scrollTo 0, 0
+  if (!self.opts.disableScrollTop)
+    win.scrollTo 0, 0
 
   # make sure nothing interfere to the visibility of this element
   self.elWrapper.style.display = self.elWrapper.style.visibility = ""
