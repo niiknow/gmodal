@@ -186,7 +186,6 @@
       }
     }
     self.closeCls = self.opts.closeCls || self.closeCls;
-    win.scrollTo(0, 0);
     self.elWrapper.style.display = self.elWrapper.style.visibility = "";
     self.elWrapper.className = trim((self.baseCls + " ") + (self.opts.cls || ''));
     body = self.doc.getElementsByTagName('html')[0];
