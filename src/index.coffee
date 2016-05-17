@@ -1,7 +1,7 @@
 Emitter = require('emitter')
 domify = require('domify')
 trim = require('trim')
-win = window
+win = window.self or window
 gmodal = win.gmodal
 
 # hold modals queue
@@ -88,7 +88,8 @@ showModalInternal = (self, opts) ->
   self.closeCls = self.opts.closeCls or self.closeCls
 
   # scroll to top before opening modal
-  # win.scrollTo 0, 0
+  if (!self.opts.disableScrollTop)
+    win.scrollTo 0, 0
 
   # make sure nothing interfere to the visibility of this element
   self.elWrapper.style.display = self.elWrapper.style.visibility = ""
@@ -161,7 +162,7 @@ class modal
   baseCls: 'gmodal'
   closeCls: 'gmodal-close'
   tpl: '<div class="gmodal-container"><div class="gmodal-wrap gmodal-left"></div><div class="gmodal-wrap gmodal-content" id="gmodalContent"></div><div class="gmodal-wrap gmodal-right"></div></div>'
-  css: '.gmodal{display:none;overflow:hidden;outline:0;-webkit-overflow-scrolling:touch;position:fixed;position:absolute;top:0;left:0;width:100%;height:200%;z-index:9999990}.gmodal .frameshim{position:absolute;display:block;visibility:hidden;width:100%;height:100%;margin:0;top:0;left:0;border:none;z-index:-999}.html-gmodal body .gmodal{display:block}.html-gmodal,.html-modal body{overflow:hidden;margin:0;padding:0;height:100%;width:100%}.gmodal-container{display:table;position:relative;width:100%;height:50%}.gmodal-wrap{display:table-cell;position:relative;vertical-align:middle}.gmodal-left,.gmodal-right{width:50%}'
+  css: '.gmodal{display:none;overflow:hidden;outline:0;-webkit-overflow-scrolling:touch;position:fixed;top:0;left:0;width:100%;height:200%;z-index:9999990}.gmodal .frameshim{position:absolute;display:block;visibility:hidden;width:100%;height:100%;margin:0;top:0;left:0;border:none;z-index:-999}.html-gmodal body .gmodal{display:block}.html-gmodal,.html-modal body{overflow:hidden;margin:0;padding:0;height:100%;width:100%}.gmodal-container{display:table;position:relative;width:100%;height:50%}.gmodal-wrap{display:table-cell;position:relative;vertical-align:middle}.gmodal-left,.gmodal-right{width:50%}'
   
   ###*
    * show or open modal

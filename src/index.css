@@ -4,7 +4,6 @@
     outline: 0;
     -webkit-overflow-scrolling: touch;
     position: fixed;
-    position: absolute; /*ie6 and above*/
     top: 0;
     left: 0;
     width: 100%;
