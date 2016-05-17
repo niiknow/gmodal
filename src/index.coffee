@@ -1,7 +1,7 @@
 Emitter = require('emitter')
 domify = require('domify')
 trim = require('trim')
-win = window
+win = window.self or window
 gmodal = win.gmodal
 
 # hold modals queue
