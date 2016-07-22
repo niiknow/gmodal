@@ -71,7 +71,6 @@ createiFrame = (parentEl, content) ->
   iframe.frameBorder = '0'
   iframe.marginWidth = '0'
   iframe.marginHeight = '0'
-  iframe.scrolling = 'no'
   iframe.setAttribute('border', '0')
   iframe.setAttribute('allowtransparency', 'true')
   iframe.width = '100%'
