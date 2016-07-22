@@ -1,7 +1,7 @@
 {
   "name": "gmodal",
   "author": "tom nguyen <tom@noogen.net>",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "description": "Global modal",
   "keywords": [

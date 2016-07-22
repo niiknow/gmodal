@@ -105,7 +105,7 @@ showModalInternal = (self, opts) ->
       if (typeof self.opts.content is 'string')
         if (self.opts.content.indexOf('<!DOCTYPE') > -1 or self.opts.iframe)
           # create iframe
-          createIframe(self.el, self.opts.content)
+          createiFrame(self.el, self.opts.content)
         else
           self.el.appendChild domify(self.opts.content)
 
@@ -280,11 +280,14 @@ class modal
     self = @
     if self.elWrapper? and !self.shim
       self.ishim = self.doc.createElement('iframe');
-      self.ishim.className = 'iframeshim'
+      self.ishim.className = 'gmodal-iframeshim'
+      self.ishim.frameBorder = '0'
+      self.ishim.marginWidth = '0'
+      self.ishim.marginHeight = '0'
       self.ishim.scrolling = 'no'
-      self.ishim.frameborder = 0
-      self.ishim.height = '100'
-      self.ishim.width = '100'
+      self.ishim.setAttribute('border', '0')
+      self.ishim.height = '100%'
+      self.ishim.width = '100%'
       self.elWrapper.appendChild self.ishim
     return self
 
