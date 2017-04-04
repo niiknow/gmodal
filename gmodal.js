@@ -84,7 +84,7 @@
 })({
 1: [function(require, module, exports) {
 (function() {
-  var Emitter, checkEvent, createModal, domify, gmodal, hideModalInternal, modal, modals, showModalInternal, trim, win;
+  var Emitter, checkEvent, createModal, createiFrame, domify, gmodal, hideModalInternal, modal, modals, showModalInternal, trim, win;
 
   Emitter = require('emitter');
 
@@ -168,6 +168,30 @@
     return el;
   };
 
+  createiFrame = function(parentEl, content) {
+    var doc, iframe;
+    iframe = win.document.createElement('iframe');
+    iframe.className = 'gmodal-iframe';
+    iframe.frameBorder = '0';
+    iframe.marginWidth = '0';
+    iframe.marginHeight = '0';
+    iframe.setAttribute('border', '0');
+    iframe.setAttribute('allowtransparency', 'true');
+    iframe.width = '100%';
+    iframe.height = '100%';
+    parentEl.appendChild(iframe);
+    if (iframe.contentWindow) {
+      iframe.contentWindow.contents = content;
+      iframe.src = 'javascript:window["contents"]';
+      return iframe;
+    }
+    doc = iframe.contentDocument || iframe.document;
+    doc.open();
+    doc.write(content);
+    doc.close();
+    return iframe;
+  };
+
   showModalInternal = function(self, opts) {
     var body, eCls, i, len, ref, v;
     self.isVisible = true;
@@ -178,7 +202,11 @@
           self.el.removeChild(self.el.firstChild);
         }
         if (typeof self.opts.content === 'string') {
-          self.el.appendChild(domify(self.opts.content));
+          if (self.opts.content.indexOf('<!DOCTYPE') > -1 || self.opts.iframe) {
+            createiFrame(self.el, self.opts.content);
+          } else {
+            self.el.appendChild(domify(self.opts.content));
+          }
         } else {
           self.el.appendChild(self.opts.content);
         }
@@ -348,7 +376,7 @@
 
     /**
      * helper method to determine if an element has class
-     * @param  {HTMLElement}  el  
+     * @param  {HTMLElement}  el
      * @param  {string}       cls class names
      * @return {Boolean}
      */
@@ -378,11 +406,14 @@
       self = this;
       if ((self.elWrapper != null) && !self.shim) {
         self.ishim = self.doc.createElement('iframe');
-        self.ishim.className = 'iframeshim';
+        self.ishim.className = 'gmodal-iframeshim';
+        self.ishim.frameBorder = '0';
+        self.ishim.marginWidth = '0';
+        self.ishim.marginHeight = '0';
         self.ishim.scrolling = 'no';
-        self.ishim.frameborder = 0;
-        self.ishim.height = '100';
-        self.ishim.width = '100';
+        self.ishim.setAttribute('border', '0');
+        self.ishim.height = '100%';
+        self.ishim.width = '100%';
         self.elWrapper.appendChild(self.ishim);
       }
       return self;

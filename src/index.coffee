@@ -65,6 +65,30 @@ createModal = (self) ->
 
     return el
 
+createiFrame = (parentEl, content) ->
+  iframe = win.document.createElement('iframe')
+  iframe.className = 'gmodal-iframe'
+  iframe.frameBorder = '0'
+  iframe.marginWidth = '0'
+  iframe.marginHeight = '0'
+  iframe.setAttribute('border', '0')
+  iframe.setAttribute('allowtransparency', 'true')
+  iframe.width = '100%'
+  iframe.height = '100%'
+  parentEl.appendChild(iframe)
+
+  if (iframe.contentWindow)
+    iframe.contentWindow.contents = content
+    iframe.src = 'javascript:window["contents"]'
+    return iframe
+
+  doc = iframe.contentDocument or iframe.document
+
+  doc.open()
+  doc.write(content)
+  doc.close()
+  return iframe
+
 showModalInternal = (self, opts) ->
   self.isVisible = true
   # empty opts mean to show previous content
@@ -78,7 +102,12 @@ showModalInternal = (self, opts) ->
         self.el.removeChild self.el.firstChild
 
       if (typeof self.opts.content is 'string')
-        self.el.appendChild domify(self.opts.content)
+        if (self.opts.content.indexOf('<!DOCTYPE') > -1 or self.opts.iframe)
+          # create iframe
+          createiFrame(self.el, self.opts.content)
+        else
+          self.el.appendChild domify(self.opts.content)
+
       else # must already be an element
         self.el.appendChild self.opts.content
 
@@ -133,7 +162,7 @@ hideModalInternal = (self) ->
     # emit modal hide
     self.isVisible = false
     self.emit('hide', self)
-    
+
     # trigger custom callback
     if (typeof self.opts.hideCallback is 'function')
       self.opts.hideCallback(self)
@@ -163,12 +192,12 @@ class modal
   closeCls: 'gmodal-close'
   tpl: '<div class="gmodal-container"><div class="gmodal-wrap gmodal-left"></div><div class="gmodal-wrap gmodal-content" id="gmodalContent"></div><div class="gmodal-wrap gmodal-right"></div></div>'
   css: '.gmodal{display:none;overflow:hidden;outline:0;-webkit-overflow-scrolling:touch;position:fixed;top:0;left:0;width:100%;height:200%;z-index:9999990}.gmodal .frameshim{position:absolute;display:block;visibility:hidden;width:100%;height:100%;margin:0;top:0;left:0;border:none;z-index:-999}.html-gmodal body .gmodal{display:block}.html-gmodal,.html-modal body{overflow:hidden;margin:0;padding:0;height:100%;width:100%}.gmodal-container{display:table;position:relative;width:100%;height:50%}.gmodal-wrap{display:table-cell;position:relative;vertical-align:middle}.gmodal-left,.gmodal-right{width:50%}'
-  
+
   ###*
    * show or open modal
    * @param  {[Object}  opts   options
    * @param  {Function} hideCb callback function on hide
-   * @return {Object}        
+   * @return {Object}
   ###
   show: (opts, hideCb) ->
     self = @
@@ -183,7 +212,7 @@ class modal
     if (opts)
       opts.hideCallback = hideCb
       modals.push(opts)
- 
+
     return false unless !self.isVisible
 
     if (modals.length > 0)
@@ -210,7 +239,7 @@ class modal
    * Helper method to inject your own css
    * @param  {string} id  css id
    * @param  {string} css the css text
-   * @return {Object}     
+   * @return {Object}
   ###
   injectStyle: (id, css) ->
     self = @
@@ -230,9 +259,9 @@ class modal
 
   ###*
    * helper method to determine if an element has class
-   * @param  {HTMLElement}  el  
+   * @param  {HTMLElement}  el
    * @param  {string}       cls class names
-   * @return {Boolean}    
+   * @return {Boolean}
   ###
   hasCls: (el, cls) ->
     for v, k in cls.split(' ')
@@ -250,11 +279,14 @@ class modal
     self = @
     if self.elWrapper? and !self.shim
       self.ishim = self.doc.createElement('iframe');
-      self.ishim.className = 'iframeshim'
+      self.ishim.className = 'gmodal-iframeshim'
+      self.ishim.frameBorder = '0'
+      self.ishim.marginWidth = '0'
+      self.ishim.marginHeight = '0'
       self.ishim.scrolling = 'no'
-      self.ishim.frameborder = 0
-      self.ishim.height = '100'
-      self.ishim.width = '100'
+      self.ishim.setAttribute('border', '0')
+      self.ishim.height = '100%'
+      self.ishim.width = '100%'
       self.elWrapper.appendChild self.ishim
     return self
 
