@@ -183,6 +183,7 @@ class GModal {
     this.tpl = templateHtml;
     this.css = templateCss;
     this.domify = domify;
+    this.emitter = emitter;
   }
 
   get name() {
