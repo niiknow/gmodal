@@ -1,44 +1,40 @@
 /*global __dirname, require, module*/
 
-const webpack = require('webpack');
+const webpack = require( 'webpack' );
 const UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
-const path = require('path');
-const env  = require('yargs').argv.env; // use --env with webpack 2
-const pkg = require('./package.json');
+const path = require( 'path' );
+const env = require( 'yargs' ).argv.env; // use --env with webpack 2
+const pkg = require( './package.json' );
 
-let libraryName = 'gmodal';
-let plugins = [], outputFile;
+let libraryName = pkg.name;
+let plugins = [],
+  outputFile;
 
 let banner = [
   ` ${pkg.name}.js - v${pkg.version}`,
   ` build: ${new Date()}`,
   ` ${pkg.description}`
-].join('\n');
+].join( '\n' );
 
-plugins.push( new webpack.BannerPlugin(banner) );
+plugins.push( new webpack.BannerPlugin( banner ) );
 
-if (env === 'build') {
-  plugins.push(new UglifyJsPlugin({ minimize: true }));
+if ( env === 'build' ) {
+  plugins.push( new UglifyJsPlugin( {
+    minimize: true,
+    sourceMap: true
+  } ) );
   outputFile = libraryName + '.min.js';
 } else {
   outputFile = libraryName + '.js';
 }
 
-
-/*
-plugins.push( new webpack.ProvidePlugin({
-    '$global': ''
-  })
-);
-*/
-
 const config = {
-  entry: __dirname + '/src/index.js',
+  entry: [ __dirname + '/src/index.js' ],
   devtool: 'source-map',
   output: {
     path: __dirname + '/lib',
     filename: outputFile,
-    library: libraryName,
+    library: 'Wu',
     libraryTarget: 'umd',
     umdNamedDefine: true
   },
@@ -61,12 +57,8 @@ const config = {
     ]
   },
   resolve: {
-    modules: [path.resolve('./src'), 'node_modules'],
-    extensions: ['.json', '.js']
-/*    alias: {
-      '$inc': path.resolve(__dirname, './lib/index.js')
-    }
-*/
+    modules: [ path.resolve( './src' ), 'node_modules' ],
+    extensions: [ '.json', '.js' ]
   },
   plugins: plugins,
   target: 'web'
