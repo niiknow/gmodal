@@ -1,6 +1,4 @@
-/* jshint esversion: 6 */
-import domify from 'domify';
-import emitter from 'component-emitter';
+const emitter = require( 'component-emitter' );
 
 const templateHtml = require( 'template.html' );
 const templateCss = require( 'template.css' );
@@ -31,6 +29,8 @@ function hideModalInternal( self ) {
     if ( modals.length !== 0 ) {
       return self.show();
     }
+
+    return self;
   }, self.opts.timeout || 50 );
 
   return self;
@@ -182,7 +182,7 @@ class GModal {
     this.closeCls = 'gmodal-close';
     this.tpl = templateHtml;
     this.css = templateCss;
-    this.domify = domify;
+    this.domify = require( 'domify' );
     this.emitter = emitter;
   }
 
