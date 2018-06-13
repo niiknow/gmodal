@@ -1,7 +1,7 @@
 {
   "name": "gmodal",
   "author": "tom nguyen <tom@noogen.net>",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "license": "MIT",
   "description": "a modal",
   "keywords": [
@@ -17,27 +17,27 @@
   "repository": "git://github.com/niiknow/gmodal.git",
   "main": "lib/gmodal.js",
   "scripts": {
-    "build": "webpack --env build",
+    "build": "webpack --env dev && webpack --env build && npm run test",
     "dev": "webpack --progress --colors --watch --env dev",
-    "test": "mocha --compilers js:babel-core/register --colors ./test/*.spec.js",
-    "test:watch": "mocha --compilers js:babel-core/register --colors -w ./test/*.spec.js"
+    "test": "mocha --require babel-core/register --colors ./test/*.spec.js",
+    "test:watch": "mocha --require babel-core/register --colors -w ./test/*.spec.js"
   },
   "dependencies": {},
   "devDependencies": {
-    "babel": "6.5.2",
-    "babel-core": "6.22.1",
-    "babel-eslint": "7.1.1",
-    "babel-loader": "6.2.10",
-    "babel-plugin-add-module-exports": "0.1.2",
-    "babel-preset-es2015": "6.22.0",
-    "chai": "3.4.1",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.0.3",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-preset-env": "^1.6.1",
+    "chai": "^4.1.2",
     "component-emitter": "github:component/emitter",
     "domify": "github:component/domify",
-    "eslint": "1.7.2",
-    "eslint-loader": "1.6.1",
-    "mocha": "2.3.4",
+    "eslint": "^4.13.1",
+    "eslint-loader": "^1.9.0",
+    "mocha": "^4.0.1",
     "raw-loader": "^0.5.1",
-    "webpack": "2.2.1",
-    "yargs": "6.6.0"
+    "webpack": "^3.10.0",
+    "yargs": "^10.0.3"
   }
 }
