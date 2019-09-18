@@ -199,7 +199,6 @@ class GModal {
     that.css = templateCss;
     that.domify = require('domify');
     that.emitter = emitter;
-    console.log(that);
   }
 
   get name() {
