@@ -1,169 +1,182 @@
-const emitter = require( 'component-emitter' );
+const emitter = require('component-emitter');
 
-const templateHtml = require( 'template.html' );
-const templateCss = require( 'template.css' );
-const win = window;
+import templateHtml from './template.tpl';
+import templateCss from './mycss.tpl';
 
-let modals = [];
+const win = global;
+const modals = [];
 
-function hideModalInternal( self ) {
-  self.elWrapper.className = '' + self.baseCls;
-  self.el.className = 'gmodal-wrap gmodal-content';
-  setTimeout( () => {
-    let eCls = self.doc.getElementsByTagName( 'html' )[ 0 ].className;
+function hideModalInternal(that) {
+  that.elWrapper.className = `${that.baseCls || ''}`;
+  that.el.className = 'gmodal-wrap gmodal-content';
 
-    self.doc.getElementsByTagName( 'html' )[ 0 ].className = self.trim( eCls.replace( /html\-gmodal/gi, '' ) );
-    self.isVisible = false;
-    self.emit( 'hide', self );
+  setTimeout(() => {
+    let eCls = that.doc.getElementsByTagName('html')[ 0 ].className;
 
-    if ( typeof self.opts.hideCallback === 'function' ) {
-      self.opts.hideCallback( self );
+    that.doc.getElementsByTagName('html')[ 0 ].className = that.trim(eCls.replace(/html\-gmodal/gi, ''));
+    that.isVisible = false;
+    that.emit('hide', that);
+
+    if (typeof that.opts.hideCallback === 'function') {
+      that.opts.hideCallback(that);
     }
 
-    if ( self.opts._autoHideHandler ) {
-      self.off( 'esc', self.opts._autoHideHandler );
-      self.off( 'click', self.opts._autoHideHandler );
-      self.off( 'tap', self.opts._autoHideHandler );
+    if (that.opts._autoHideHandler) {
+      that.off('esc', that.opts._autoHideHandler);
+      that.off('click', that.opts._autoHideHandler);
+      that.off('tap', that.opts._autoHideHandler);
     }
 
-    if ( modals.length !== 0 ) {
-      return self.show();
+    if (modals.length !== 0) {
+      return that.show();
     }
 
-    return self;
-  }, self.opts.timeout || 50 );
+    return that;
+  }, that.opts.timeout || 50);
 
-  return self;
+  return that;
 }
 
-function showModalInternal( self, opts ) {
+function showModalInternal(that, opts) {
   let body, eCls, i, len, ref, v;
 
-  self.isVisible = true;
+  that.isVisible = true;
 
-  if ( opts ) {
-    self.opts = opts;
-    if ( self.opts.content ) {
-      while ( self.el.firstChild ) {
-        self.el.removeChild( self.el.firstChild );
+  if (opts) {
+    that.opts = opts;
+    if (that.opts.content) {
+      while (that.el.firstChild) {
+        that.el.removeChild(that.el.firstChild);
       }
 
-      if ( typeof self.opts.content === 'string' ) {
-        if ( self.opts.content.indexOf( '<!DOCTYPE' ) > -1 || self.opts.iframe ) {
-          self.loadiFrame( self.el, self.opts.content, null, 'gmodal-iframe' );
+      if (typeof that.opts.content === 'string') {
+        if (that.opts.content.indexOf('<!DOCTYPE') > -1 || that.opts.iframe) {
+          that.loadiFrame(that.el, that.opts.content, null, 'gmodal-iframe');
         } else {
-          self.el.appendChild( self.domify( self.opts.content ) );
+          that.el.appendChild(that.domify(that.opts.content));
         }
       } else {
-        self.el.appendChild( self.opts.content );
+        that.el.appendChild(that.opts.content);
       }
 
-      self.opts.content = null;
+      that.opts.content = null;
     }
   }
 
-  self.closeCls = self.opts.closeCls || self.closeCls;
-  if ( !self.opts.disableScrollTop ) {
-    win.scrollTo( 0, 0 );
+  that.closeCls = that.opts.closeCls || that.closeCls;
+  if (!that.opts.disableScrollTop) {
+    win.scrollTo(0, 0);
   }
 
-  self.elWrapper.style.display = self.elWrapper.style.visibility = '';
-  self.elWrapper.className = self.trim( ( self.baseCls + ' ' ) + ( self.opts.cls || '' ) );
+  that.elWrapper.style.display = that.elWrapper.style.visibility = '';
+  that.elWrapper.className = that.trim((that.baseCls + ' ') + (that.opts.cls || ''));
 
-  body = self.doc.getElementsByTagName( 'html' )[ 0 ];
+  body = that.doc.getElementsByTagName('html')[ 0 ];
   eCls = body.className;
-  body.className = self.trim( eCls + ' html-gmodal' );
+  body.className = that.trim(eCls + ' html-gmodal');
 
-  setTimeout( () => {
-    self.emit( 'show-timeout', self );
-    self.el.className = self.trim( ( ' ' + self.el.className + ' ' ).replace( ' in ', '' ) + ' in' );
-  }, self.opts.timeout || 50 );
+  setTimeout(() => {
+    that.emit('show-timeout', that);
+    that.el.className = that.trim((` ${ that.el.className } `).replace(' in ', '') + ' in');
+  }, that.opts.timeout || 50);
 
-  if ( self.opts.hideOn ) {
-    self.opts._autoHideHandler = () => {
-      return hideModalInternal( self );
+  if (that.opts.hideOn) {
+    that.opts._autoHideHandler = () => {
+      return hideModalInternal(that);
     };
-    ref = self.opts.hideOn.split( ',' );
-    for ( i = 0, len = ref.length; i < len; i++ ) {
+
+    ref = that.opts.hideOn.split(',');
+    for (i = 0, len = ref.length; i < len; i++) {
       v = ref[ i ];
-      if ( v === 'esc' || v === 'click' || v === 'tap' ) {
-        self.on( v, self.opts._autoHideHandler );
+      if (v === 'esc' || v === 'click' || v === 'tap') {
+        that.on(v, that.opts._autoHideHandler);
       }
     }
   }
 
-  self.emit( 'show', self );
-  return self;
+  that.emit('show', that);
+  return that;
 }
 
-function checkEvent( self, name, evt, el ) {
-  var myEvt, scls, tg;
+function checkEvent(that, name, evt, el) {
+  let myEvt, scls, tg;
 
   evt = evt || win.event;
   tg = evt.target || evt.srcElement;
-  if ( tg.nodeType === 3 ) {
+  if (tg.nodeType === 3) {
     tg = tg.parentNode;
   }
-  if ( self.hasCls( tg.parentNode, '' + self.closeCls ) ) {
+  if (that.hasCls(tg.parentNode, '' + that.closeCls)) {
     tg = tg.parentNode;
   }
   scls = 'gmodal-container gmodal-wrap';
-  if ( name === 'click' ) {
-    if ( self.hasCls( tg, scls ) || tg === el ) {
-      self.emit( 'click', tg, evt );
+  if (name === 'click') {
+    if (that.hasCls(tg, scls) || tg === el) {
+      that.emit('click', tg, evt);
     }
-  } else if ( name === 'keypress' ) {
-    if ( self.hasCls( tg, scls ) || tg === el || tg === self.doc || tg === self.doc.body ) {
-      if ( ( evt.which || evt.keyCode ) === 27 ) {
-        self.emit( 'esc', tg, evt );
+  } else if (name === 'keypress') {
+    if (that.hasCls(tg, scls) || tg === el || tg === that.doc || tg === that.doc.body) {
+      if ((evt.which || evt.keyCode) === 27) {
+        that.emit('esc', tg, evt);
       }
     }
-  } else if ( name === 'tap' ) {
-    if ( self.hasCls( tg, scls ) || tg === el ) {
-      self.emit( 'tap', tg, evt );
+  } else if (name === 'tap') {
+    if (that.hasCls(tg, scls) || tg === el) {
+      that.emit('tap', tg, evt);
     }
   }
-  if ( self.hasCls( tg, '' + self.closeCls ) ) {
+  if (that.hasCls(tg, '' + that.closeCls)) {
     myEvt = {
       cancel: false
     };
-    self.emit( 'close', myEvt, tg, evt );
-    if ( !myEvt.cancel ) {
-      hideModalInternal( self );
+
+    that.emit('close', myEvt, tg, evt);
+    if (!myEvt.cancel) {
+      hideModalInternal(that);
     }
   }
   return true;
 }
 
-function createModal( self ) {
-  var el = self.doc.getElementById( 'gmodal' );
+function createModal(that) {
+  let el = that.doc.getElementById('gmodal');
 
-  if ( !el ) {
-    self.injectStyle( 'gmodalcss', self.css );
-    el = self.doc.createElement( 'div' );
+  if (!el) {
+    that.injectStyle('gmodalcss', that.css);
+    el = that.doc.createElement('div');
     el.id = 'gmodal';
 
-    self.addEvent( el, 'click', ( evt ) => {
-      return checkEvent( self, 'click', evt, el );
-    } );
+    if (el.setAttribute) {
+      el.setAttribute('aria-modal', 'true');
+      el.setAttribute('role', 'dialog');
+      el.setAttribute('aria-labelledby', 'modalTitle');
+    } else {
+      el['aria-modal'] = 'true';
+      el['role'] = 'dialog';
+      el['aria-labelledby'] = 'modalTitle';
+    };
 
-    self.addEvent( el, 'keypress', ( evt ) => {
-      return checkEvent( self, 'keypress', evt, el );
-    } );
+    that.addEvent(el, 'click', (evt) => {
+      return checkEvent(that, 'click', evt, el);
+    });
 
-    if ( !self.doc.gmodalAttached ) {
-      self.addEvent( self.doc, 'keypress', ( evt ) => {
-        return checkEvent( self, 'keypress', evt, el );
-      } );
-      self.doc.gmodalAttached = true;
+    that.addEvent(el, 'keypress', (evt) => {
+      return checkEvent(that, 'keypress', evt, el);
+    });
+
+    if (!that.doc.gmodalAttached) {
+      that.addEvent(that.doc, 'keypress', (evt) => {
+        return checkEvent(that, 'keypress', evt, el);
+      });
+      that.doc.gmodalAttached = true;
     }
 
-    self.addEvent( el, 'tap', ( evt ) => {
-      return checkEvent( self, 'tap', evt, el );
-    } );
+    that.addEvent(el, 'tap', (evt) => {
+      return checkEvent(that, 'tap', evt, el);
+    });
 
-    el.appendChild( self.domify( self.tpl ) );
-    self.doc.getElementsByTagName( 'body' )[ 0 ].appendChild( el );
+    el.appendChild(that.domify(that.tpl));
+    that.doc.getElementsByTagName('body')[ 0 ].appendChild(el);
   }
 
   return el;
@@ -171,19 +184,22 @@ function createModal( self ) {
 
 class GModal {
   constructor() {
-    this.win = window;
-    this._name = 'gmodal';
-    this.doc = this.win.document;
-    this.ishim = null;
-    this.elWrapper = null;
-    this.el = null;
-    this.opts = {};
-    this.baseCls = 'gmodal';
-    this.closeCls = 'gmodal-close';
-    this.tpl = templateHtml;
-    this.css = templateCss;
-    this.domify = require( 'domify' );
-    this.emitter = emitter;
+    const that = this;
+
+    that.win = window;
+    that._name = 'gmodal';
+    that.doc = this.win.document;
+    that.ishim = null;
+    that.elWrapper = null;
+    that.el = null;
+    that.opts = {};
+    that.baseCls = 'gmodal';
+    that.closeCls = 'gmodal-close';
+    that.tpl = templateHtml;
+    that.css = templateCss;
+    that.domify = require('domify');
+    that.emitter = emitter;
+    console.log(that);
   }
 
   get name() {
@@ -194,14 +210,14 @@ class GModal {
    * cross browser attach event
    * @param {object} obj     source object
    * @param {string} evtName event name
-   * @param {object}         self
+   * @param {object}         that
    */
-  addEvent( obj, evtName, func ) {
-    if ( obj.addEventListener ) {
-      obj.addEventListener( evtName, func, false );
-    } else if ( obj.attachEvent ) {
-      obj.attachEvent( evtName, func );
-    } else if ( this.getAttr( obj, 'on' + evtName ) ) {
+  addEvent(obj, evtName, func) {
+    if (obj.addEventListener) {
+      obj.addEventListener(evtName, func, false);
+    } else if (obj.attachEvent) {
+      obj.attachEvent(evtName, func);
+    } else if (this.getAttr(obj, 'on' + evtName)) {
       obj[ 'on' + evtName ] = func;
     } else {
       obj[ evtName ] = func;
@@ -215,13 +231,13 @@ class GModal {
    * @param  {string}       cls class names
    * @return {Boolean}
    */
-  hasCls( el, cls ) {
+  hasCls(el, cls) {
     let i, k, len, ref, v;
 
-    ref = cls.split( ' ' );
-    for ( k = i = 0, len = ref.length; i < len; k = ++i ) {
+    ref = cls.split(' ');
+    for (k = i = 0, len = ref.length; i < len; k = ++i) {
       v = ref[ k ];
-      if ( ( ' ' + el.className + ' ' ).indexOf( ' ' + v + ' ' ) >= 0 ) {
+      if ((' ' + el.className + ' ').indexOf(' ' + v + ' ') >= 0) {
         return true;
       }
     }
@@ -237,43 +253,43 @@ class GModal {
    * @param  {string} css the css text
    * @return {Object}
    */
-  injectStyle( id, css ) {
-    let el, elx, self = this;
+  injectStyle(id, css) {
+    let el, elx, that = this;
 
-    el = self.doc.getElementById( id );
+    el = that.doc.getElementById(id);
 
-    if ( !el ) {
-      el = self.doc.createElement( 'style' );
+    if (!el) {
+      el = that.doc.createElement('style');
       el.id = id;
       el.type = 'text/css';
-      if ( el.styleSheet ) {
+      if (el.styleSheet) {
         el.styleSheet.cssText = css;
       } else {
-        el.appendChild( self.doc.createTextNode( css ) );
+        el.appendChild(that.doc.createTextNode(css));
       }
-      elx = self.doc.getElementsByTagName( 'link' )[ 0 ];
-      elx = elx || ( self.doc.head || self.doc.getElementsByTagName( 'head' )[ 0 ] ).lastChild;
-      elx.parentNode.insertBefore( el, elx );
+      elx = that.doc.getElementsByTagName('link')[ 0 ];
+      elx = elx || (that.doc.head || that.doc.getElementsByTagName('head')[ 0 ]).lastChild;
+      elx.parentNode.insertBefore(el, elx);
     }
 
-    return self;
+    return that;
   }
 
   /**
    * create an iframe
    * @return {object} the iframe
    */
-  createiFrame( id, className ) {
-    let iframe = this.doc.createElement( 'iframe' );
+  createiFrame(id, className) {
+    let iframe = this.doc.createElement('iframe');
 
-    if ( id ) iframe.id = id;
-    if ( className ) iframe.className = className;
+    if (id) iframe.id = id;
+    if (className) iframe.className = className;
 
     iframe.frameBorder = '0';
     iframe.marginWidth = '0';
     iframe.marginHeight = '0';
-    iframe.setAttribute( 'border', '0' );
-    iframe.setAttribute( 'allowtransparency', 'true' );
+    iframe.setAttribute('border', '0');
+    iframe.setAttribute('allowtransparency', 'true');
     iframe.width = '100%';
     iframe.height = '100%';
 
@@ -288,20 +304,20 @@ class GModal {
    * @param  {string} className element class names
    * @return {HTMLElement}           the iframe
    */
-  loadiFrame( parentEl, html, id, className ) {
-    let iframe = this.createiFrame( id, className );
+  loadiFrame(parentEl, html, id, className) {
+    const iframe = this.createiFrame(id, className);
 
-    parentEl[ 0 ].appendChild( iframe );
+    parentEl[ 0 ].appendChild(iframe);
 
     /* jshint scripturl: true */
-    if ( iframe.contentWindow ) {
+    if (iframe.contentWindow) {
       iframe.contentWindow.contents = html;
       iframe.src = 'javascript:window["contents"]';
     } else {
-      let doc = iframe.contentDocument || iframe.document;
+      const doc = iframe.contentDocument || iframe.document;
 
       doc.open();
-      doc.write( html );
+      doc.write(html);
       doc.close();
     }
 
@@ -313,8 +329,8 @@ class GModal {
    * @param  {string} str the string
    * @return {string}     trimmed result
    */
-  trim( str ) {
-    return ( str.trim ) ? str.trim() : str.replace( /^\s*|\s*$/g, '' );
+  trim(str) {
+    return (str.trim) ? str.trim() : str.replace(/^\s*|\s*$/g, '');
   }
 
   /**
@@ -323,37 +339,38 @@ class GModal {
    * @param  {Function} hideCb callback function on hide
    * @return {Object}
    */
-  show( opts, hideCb ) {
-    let ref, self = this;
+  show(opts, hideCb) {
+    const that = this;
+    const ref = that.doc;
 
-    if ( !( ( ref = self.doc ) ? ref.body : void 0 ) ) {
+    if (!ref && !ref.body) {
       return false;
     }
 
-    self.elWrapper = createModal( self );
-    if ( !self.el ) {
-      self.el = self.doc.getElementById( 'gmodalContent' );
+    that.elWrapper = createModal(that);
+    if (!that.el) {
+      that.el = that.doc.getElementById('gmodalContent');
     }
 
-    if ( opts ) {
+    if (opts) {
       opts.hideCallback = hideCb;
-      modals.push( opts );
+      modals.push(opts);
     }
 
-    if ( self.isVisible ) {
+    if (that.isVisible) {
       return false;
     }
 
-    if ( modals.length > 0 ) {
+    if (modals.length > 0) {
       opts = modals.shift();
     }
 
-    if ( !opts ) {
+    if (!opts) {
       return false;
     }
 
-    showModalInternal( self, opts );
-    return self;
+    showModalInternal(that, opts);
+    return that;
   }
 
   /**
@@ -361,49 +378,20 @@ class GModal {
    * @return {Object}
    */
   hide() {
-    let self = this;
+    let that = this;
 
-    if ( !self.elWrapper ) {
-      return self;
+    if (!that.elWrapper) {
+      return that;
     }
 
-    if ( self.opts ) {
-      hideModalInternal( self );
+    if (that.opts) {
+      hideModalInternal(that);
     }
 
-    return self;
-  }
-
-  /**
-   * append an iframe shim for older IE
-   * WARNING: this is only for stupid older IE bug
-   * do not use with modern browser or site with ssl
-   * @return {Object}
-   */
-  iShimmy() {
-    let self = this;
-
-    if ( self.elWrapper && !self.shim ) {
-      self.ishim = self.doc.createElement( 'iframe' );
-      self.ishim.className = 'gmodal-iframeshim';
-      self.ishim.frameBorder = '0';
-      self.ishim.marginWidth = '0';
-      self.ishim.marginHeight = '0';
-      self.ishim.scrolling = 'no';
-      self.ishim.setAttribute( 'border', '0' );
-      self.ishim.height = '100%';
-      self.ishim.width = '100%';
-      self.elWrapper.appendChild( self.ishim );
-    }
-    return self;
+    return that;
   }
 }
 
-let gmodal = new GModal();
+emitter(GModal.prototype);
 
-if ( !gmodal.win.gmodal ) {
-  emitter( GModal.prototype );
-  gmodal.win.gmodal = new GModal();
-}
-
-module.exports = gmodal.win.gmodal;
+export default new GModal();

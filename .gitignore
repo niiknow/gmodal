@@ -25,7 +25,10 @@ build/Release
 # Dependency directory
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
 node_modules
+
+# Remove some common IDE working directories
+.idea
+.vscode
 .DS_Store
-components
-build
-build.js
+.ds_store
+.nyc_output
