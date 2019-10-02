@@ -106,9 +106,11 @@ function checkEvent(that, name, evt, el) {
   if (tg.nodeType === 3) {
     tg = tg.parentNode;
   }
+
   if (that.hasCls(tg.parentNode, '' + that.closeCls)) {
     tg = tg.parentNode;
   }
+
   scls = 'gmodal-container gmodal-wrap';
   if (name === 'click') {
     if (that.hasCls(tg, scls) || tg === el) {
@@ -124,7 +126,16 @@ function checkEvent(that, name, evt, el) {
     if (that.hasCls(tg, scls) || tg === el) {
       that.emit('tap', tg, evt);
     }
+  } else if (name === 'keydown') {
+    // if not allow background focus, prevent tab
+    if (!that.opts.allowBackgroundFocus && that.el && that.isVisible && (evt.which || evt.keyCode) === 9) {
+      if (that.el.contains && !that.el.contains(tg)) {
+        evt.preventDefault();
+        return false;
+      }
+    }
   }
+
   if (that.hasCls(tg, '' + that.closeCls)) {
     myEvt = {
       cancel: false
@@ -135,6 +146,7 @@ function checkEvent(that, name, evt, el) {
       hideModalInternal(that);
     }
   }
+
   return true;
 }
 
@@ -168,6 +180,9 @@ function createModal(that) {
       that.addEvent(that.doc, 'keypress', (evt) => {
         return checkEvent(that, 'keypress', evt, el);
       });
+      that.addEvent(that.doc, 'keydown', (evt) => {
+        return checkEvent(that, 'keydown', evt, el);
+      });
       that.doc.gmodalAttached = true;
     }
 
@@ -199,6 +214,7 @@ class GModal {
     that.css = templateCss;
     that.domify = require('domify');
     that.emitter = emitter;
+    that.isVisible = false;
   }
 
   get name() {
