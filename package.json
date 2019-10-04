@@ -1,6 +1,6 @@
 {
   "name": "gmodal",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "description": "a modal",
   "author": "Tom Noogen",
   "main": "lib/gmodal.min.js",

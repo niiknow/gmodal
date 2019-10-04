@@ -41,29 +41,29 @@ function showModalInternal(that, opts) {
   let body, eCls, i, len, ref, v;
 
   that.isVisible = true;
+  that.opts = opts || that.opts;
 
-  if (opts) {
-    that.opts = opts;
-    if (that.opts.content) {
-      while (that.el.firstChild) {
-        that.el.removeChild(that.el.firstChild);
-      }
-
-      if (typeof that.opts.content === 'string') {
-        if (that.opts.content.indexOf('<!DOCTYPE') > -1 || that.opts.iframe) {
-          that.loadiFrame(that.el, that.opts.content, null, 'gmodal-iframe');
-        } else {
-          that.el.appendChild(that.domify(that.opts.content));
-        }
-      } else {
-        that.el.appendChild(that.opts.content);
-      }
-
-      that.opts.content = null;
+  if (that.opts.content) {
+    while (that.el.firstChild) {
+      that.el.removeChild(that.el.firstChild);
     }
+
+    if (typeof that.opts.content === 'string') {
+      if (that.opts.content.indexOf('<!DOCTYPE') > -1 || that.opts.iframe) {
+        that.loadiFrame(that.el, that.opts.content, null, 'gmodal-iframe');
+      } else {
+        that.el.appendChild(that.domify(that.opts.content));
+      }
+    } else {
+      that.el.appendChild(that.opts.content);
+    }
+
+    that.opts.content = null;
   }
 
+  that.opts.autoFocusId = that.opts.autoFocusId || 'modalTitle';
   that.closeCls = that.opts.closeCls || that.closeCls;
+
   if (!that.opts.disableScrollTop) {
     win.scrollTo(0, 0);
   }
@@ -131,6 +131,14 @@ function checkEvent(that, name, evt, el) {
     if (!that.opts.allowBackgroundFocus && that.el && that.isVisible && (evt.which || evt.keyCode) === 9) {
       if (that.el.contains && !that.el.contains(tg)) {
         evt.preventDefault();
+        if (that.opts.autoFocusId) {
+          const el = that.doc.getElementById(that.opts.autoFocusId);
+
+          if (el && el.focus) {
+            el.focus();
+          }
+        }
+
         return false;
       }
     }
